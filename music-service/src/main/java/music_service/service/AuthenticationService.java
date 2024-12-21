@@ -1,8 +1,8 @@
 package music_service.service;
-import music_service.dto.request.AuthenticationRequest;
-import music_service.dto.request.IntrospectRequest;
-import music_service.dto.response.AuthenticationResponse;
-import music_service.dto.response.IntrospectResponse;
+import music_service.dto.authenticationDto.request.AuthenticationRequest;
+import music_service.dto.authenticationDto.request.IntrospectRequest;
+import music_service.dto.authenticationDto.response.AuthenticationResponse;
+import music_service.dto.authenticationDto.response.IntrospectResponse;
 import music_service.exception.AuthenException;
 import music_service.exception.ErrorCode;
 import music_service.repository.AccountRepository;
@@ -45,14 +45,15 @@ public class AuthenticationService {
 
     final AccountRepository accountRepository;
 
-    final PasswordEncoder passwordEncoder;
-
-
 
     @Autowired
-    public AuthenticationService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
+//        this.passwordEncoder = passwordEncoder;
+    }
+
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
     }
 
 
@@ -65,7 +66,7 @@ public class AuthenticationService {
         if (user == null) {
             throw new AuthenException(ErrorCode.USER_NOT_EXISTED);
         }
-        boolean authenticated = passwordEncoder.matches(req.getPassword(), user.getPassword());
+        boolean authenticated = passwordEncoder().matches(req.getPassword(), user.getPassword());
         if(!authenticated){
             throw new AuthenException(ErrorCode.UNAUTHENTICATED);
         }
@@ -164,7 +165,4 @@ public class AuthenticationService {
         return signedJWT;
     }
 
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
 }

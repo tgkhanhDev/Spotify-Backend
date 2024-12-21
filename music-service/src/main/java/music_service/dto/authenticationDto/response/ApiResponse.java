@@ -1,4 +1,4 @@
-package music_service.dto.response;
+package music_service.dto.authenticationDto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

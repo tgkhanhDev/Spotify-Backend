@@ -1,4 +1,4 @@
-package music_service.dto.request;
+package music_service.dto.authenticationDto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

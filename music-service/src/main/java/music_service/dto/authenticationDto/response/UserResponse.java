@@ -1,4 +1,4 @@
-package music_service.dto.response;
+package music_service.dto.authenticationDto.response;
 
 import music_service.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;

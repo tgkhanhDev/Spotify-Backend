@@ -1,6 +1,6 @@
 package music_service.exception;
 
-import music_service.dto.response.ApiResponse;
+import music_service.dto.authenticationDto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

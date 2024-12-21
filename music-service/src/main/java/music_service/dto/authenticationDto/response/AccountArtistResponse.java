@@ -1,14 +1,16 @@
-package music_service.dto.request;
+package music_service.dto.authenticationDto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRequest {
-    String email;
-    String password;
+public class AccountArtistResponse {
+    UUID id;
+    String nickName;
 }

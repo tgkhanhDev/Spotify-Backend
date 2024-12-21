@@ -1,7 +1,7 @@
 package music_service.mapper;
 
-import music_service.dto.request.CreateUserRequest;
-import music_service.dto.response.UserResponse;
+import music_service.dto.authenticationDto.request.CreateUserRequest;
+import music_service.dto.authenticationDto.response.UserResponse;
 import music_service.model.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

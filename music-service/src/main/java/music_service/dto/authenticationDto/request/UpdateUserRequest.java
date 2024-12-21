@@ -1,4 +1,4 @@
-package music_service.dto.request;
+package music_service.dto.authenticationDto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
-
-    String email;
+public class UpdateUserRequest {
     String password;
+    String phoneNumber;
+    String firstName;
+    String lastName;
 }

@@ -1,5 +1,6 @@
 package music_service.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import music_service.dto.musicDto.response.MusicResponse;
 import music_service.service.MusicService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,9 +29,8 @@ public class MusicController {
 
     @GetMapping("/get-all")
     @Operation(summary = "Test Only", description = "Test Only")
+    @SecurityRequirement(name = "BearerAuth") // Apply security globally to the class
     public List<MusicResponse> getAllMusic() {
-//        return Object.builder().build
         return musicService.getAllMusic();
-//        return "Hello";
     }
 }

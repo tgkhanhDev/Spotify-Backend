@@ -1,4 +1,4 @@
-package music_service.dto.response;
+package music_service.dto.authenticationDto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-    String token;
-    boolean valid;
+public class AuthenticationRequest {
+    String email;
+    String password;
 }
