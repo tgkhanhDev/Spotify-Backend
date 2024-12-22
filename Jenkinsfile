@@ -34,6 +34,14 @@ pipeline {
                 }
             }
         }
+        stage('Step2.999: Start Docker Daemon') {
+            steps {
+                script {
+                    // Start Docker service if it's not running
+                    sh 'sudo systemctl start docker'
+                }
+            }
+        }
         stage('Step3: Build Docker image') {
             steps {
                 dir('music-service') {
