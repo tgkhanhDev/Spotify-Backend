@@ -18,14 +18,14 @@ pipeline {
                 echo 'Jenkins pipeline is redeploying!!!'
             }
         }
-        stage('Step1: Navigate to music-service') {
+        stage('Step 1: Navigate to music-service') {
             steps {
                 dir('music-service') {
                     echo 'Navigated to music-service directory'
                 }
             }
         }
-        stage('Step2: Build source with Maven') {
+        stage('Step 2: Build source with Maven') {
             steps {
                 dir('music-service') {
                     sh 'mvn clean package'
@@ -34,7 +34,17 @@ pipeline {
             }
         }
         
-        stage('Step3: Build Docker image') {
+        
+        stage('Step 3: Remove old container') {
+            steps {
+                dir('music-service') {
+                    sh 'docker rm -f music-service'
+                    echo 'Remove container successfully'
+                }
+            }
+        }
+
+        stage('Step 4: Build Docker image') {
             steps {
                 dir('music-service') {
                     sh 'docker build -t music-service:latest .'
@@ -42,15 +52,10 @@ pipeline {
                 }
             }
         }
-        stage('Step4: Run Docker image') {
+        stage('Step 5: Run Docker image') {
             steps {
                 sh 'docker run -d -p 8005:8080 --name music-service music-service:latest'
                 echo 'Docker image running on port 8005'
-            }
-        }
-        stage('Step5: Done') {
-            steps {
-                echo 'Pipeline execution completed successfully!'
             }
         }
     }
