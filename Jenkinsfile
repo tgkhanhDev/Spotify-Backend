@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'my_maven'  // Correct syntax: specify tool name here
-        docker 'my_docker'  // Correct syntax: specify tool name here
+        maven 'my_maven'  // Correct syntax: specify Maven tool name here
+        dockerTool 'my_docker'  // Corrected tool type for Docker
     }
 
     stages {
