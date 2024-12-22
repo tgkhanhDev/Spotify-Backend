@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        maven: 'my_maven_3.8.1',
+        docker: 'my_docker_latest'
+    }
+
     stages {
         stage('Check Versions') {
             steps {
