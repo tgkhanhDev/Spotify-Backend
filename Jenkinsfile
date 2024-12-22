@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'my_maven'  // 'Maven' matches the name you configured in Global Tool Configuration
-    }
-
     stages {
         stage('Check Versions') {
             steps {
