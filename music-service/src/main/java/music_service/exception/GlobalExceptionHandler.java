@@ -63,4 +63,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
+    @ExceptionHandler(value = MusicException.class)
+    ResponseEntity<ApiResponse> handlingMusicException(MusicException exception) {
+
+        ErrorCode errorCode = exception.getErrorCode();
+        ApiResponse apiResponse = new ApiResponse().builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
 }

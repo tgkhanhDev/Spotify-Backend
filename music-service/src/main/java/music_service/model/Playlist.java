@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class Playlist {
     String description;
 
     @Column(name = "createdTime", nullable = false)
-    LocalDate createdTime;
+    LocalDateTime createdTime;
 
     @ManyToOne()
     @JoinColumn(name = "creatorId")
