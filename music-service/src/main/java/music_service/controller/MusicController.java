@@ -29,7 +29,8 @@ public class MusicController {
 
     @GetMapping("/get-all")
     @Operation(summary = "Test Only", description = "Test Only")
-    @SecurityRequirement(name = "BearerAuth") // Apply security globally to the class
+//    @SecurityRequirement(name = "
+//    BearerAuth") // Apply security globally to the class
     public List<MusicResponse> getAllMusic() {
         return musicService.getAllMusic();
     }

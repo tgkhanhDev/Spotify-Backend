@@ -22,7 +22,11 @@ public enum ErrorCode {
     INVALID_PASSWORD(1005, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User does not exist", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1007, "Unauthenticated user", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN);
+    CLAIM_NOT_FOUND(1008, "Claims not found", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
+    //Music
+    PLAYLIST_NOT_FOUND(2000, "Playlist not found", HttpStatus.NOT_FOUND);
+
 
     int code;
     String message;

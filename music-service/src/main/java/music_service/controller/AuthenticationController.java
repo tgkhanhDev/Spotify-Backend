@@ -1,5 +1,6 @@
 package music_service.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login User", description = "user1@example.com   123123")
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest){
         return authenticationService.authenticate(authenticationRequest);
     }

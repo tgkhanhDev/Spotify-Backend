@@ -26,16 +26,16 @@ public class Playlist {
     @Column(name = "title", nullable = false)
     String title;
 
-    @Column(name = "backgroundImage", nullable = false)
+    @Column(name = "backgroundImage", nullable = true)
     String backgroundImage;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = true)
     String description;
 
     @Column(name = "createdTime", nullable = false)
     LocalDate createdTime;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "creatorId")
     Account account;
 

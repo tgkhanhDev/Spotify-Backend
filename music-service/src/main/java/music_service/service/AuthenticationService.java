@@ -108,6 +108,11 @@ public class AuthenticationService {
     private String generateToken(String username) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
+        var user = accountRepository.findByEmail(username).orElse(null);
+        if (user == null) {
+            throw new AuthenException(ErrorCode.USER_NOT_EXISTED);
+        }
+
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(username)
                 .issuer("tgkhanh")
@@ -115,7 +120,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("userId", "Custom")
+                .claim("userId", user.getId())
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

@@ -1,34 +1,55 @@
 package music_service.controller;
 
-import music_service.dto.artistCollaborationDto.response.ArtistCollaborationResponse;
-import music_service.mapper.ArtistCollaborationMapper;
-import music_service.model.ArtistCollaboration;
-import music_service.repository.ArtistCollaborationRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import music_service.dto.playlistDto.response.PlaylistOverallResponse;
+import music_service.dto.playlistDto.response.PlaylistResponse;
+import music_service.model.Playlist;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import music_service.service.PlaylistService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/playlist")
-@Tag(name = "Shopping Cart")
+@Tag(name = "Playlist")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PlaylistController {
 
-    private final ArtistCollaborationRepository artistRepository;
-    private final ArtistCollaborationMapper artistCollaborationMapper;
+    PlaylistService playlistService;
 
-    public PlaylistController(ArtistCollaborationRepository artistRepository, ArtistCollaborationMapper artistCollaborationMapper) {
-        this.artistRepository = artistRepository;
-        this.artistCollaborationMapper = artistCollaborationMapper;
+    public PlaylistController(PlaylistService playlistService) {
+        this.playlistService = playlistService;
     }
 
+
     @GetMapping("")
-    public List<ArtistCollaborationResponse> getAllPlaylist() {
-//        return Object.builder().build
-        List<ArtistCollaboration> artistCollaboration = artistRepository.findAll();
-        return artistCollaborationMapper.toArtistCollaborationResponseList(artistCollaboration);
+    @Operation(summary = "*Get all playlist by user")
+    public List<PlaylistOverallResponse> getAllPlaylistByUser() {
+         return playlistService.getAllUserPlaylist();
+//        List<ArtistCollaboration> artistCollaboration = artistRepository.findAll();
+//        return artistCollaborationMapper.toArtistCollaborationResponseList(artistCollaboration);
+    }
+
+    @GetMapping("/{playlistId}")
+    @Operation(summary = "Get all playlist by user")
+    public PlaylistResponse getPlaylistById(@RequestParam UUID playlistId) {
+        return playlistService.getPlaylistById(playlistId);
+    }
+
+    @PostMapping("/create")
+    @Operation(summary = "*Create new playlist")
+    public PlaylistResponse createPlaylist() {
+        return playlistService.createPlaylist();
+    }
+
+    @DeleteMapping("/delete/{playlistId}")
+    @Operation(summary = "*Delete playlist")
+    public PlaylistResponse deletePlaylist(@RequestParam UUID playlistId) {
+        return playlistService.deletePlaylistById(playlistId);
     }
 
 

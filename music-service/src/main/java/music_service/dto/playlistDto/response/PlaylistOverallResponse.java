@@ -1,9 +1,8 @@
 package music_service.dto.playlistDto.response;
 
-import music_service.dto.musicDto.response.MusicResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import music_service.model.PlaylistMusic;
+import music_service.dto.musicDto.response.MusicResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,14 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlaylistResponse {
-
+public class PlaylistOverallResponse {
     UUID playlistId;
     String backgroundImage;
     String title;
-    int lengthOfTime;
-    int songCount;
-    //DateAdd
-    String description;
-    List<PlaylistMusic> musics;
 }
