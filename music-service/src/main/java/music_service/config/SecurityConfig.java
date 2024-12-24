@@ -34,7 +34,7 @@ public class SecurityConfig {
     };
 
     private final String[] PUBLIC_ENDPOINTS_POST = {
-            "/auth/login"
+//            "/auth/login"
     };
 
     private final String[] PUBLIC_ENDPOINTS_GET = {

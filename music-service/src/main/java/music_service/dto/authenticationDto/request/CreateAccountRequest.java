@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserRequest {
+public class CreateAccountRequest {
     @NotNull
     @Email
     String email;

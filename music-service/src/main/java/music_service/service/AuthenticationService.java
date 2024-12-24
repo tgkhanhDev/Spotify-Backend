@@ -1,10 +1,15 @@
 package music_service.service;
+
 import music_service.dto.authenticationDto.request.AuthenticationRequest;
 import music_service.dto.authenticationDto.request.IntrospectRequest;
+import music_service.dto.authenticationDto.request.ResetPasswordRequest;
+import music_service.dto.authenticationDto.response.AccountResponse;
 import music_service.dto.authenticationDto.response.AuthenticationResponse;
 import music_service.dto.authenticationDto.response.IntrospectResponse;
 import music_service.exception.AuthenException;
 import music_service.exception.ErrorCode;
+import music_service.mapper.AccountMapper;
+import music_service.model.Account;
 import music_service.repository.AccountRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -43,12 +48,13 @@ public class AuthenticationService {
     protected long REFRESHABLE_DURATION;
 
     final AccountRepository accountRepository;
-
+    final AccountMapper accountMapper;
 
     @Autowired
-    public AuthenticationService(AccountRepository accountRepository) {
+    public AuthenticationService(AccountRepository accountRepository, AccountMapper accountMapper) {
         this.accountRepository = accountRepository;
 //        this.passwordEncoder = passwordEncoder;
+        this.accountMapper = accountMapper;
     }
 
     PasswordEncoder passwordEncoder() {
@@ -66,7 +72,7 @@ public class AuthenticationService {
             throw new AuthenException(ErrorCode.USER_NOT_EXISTED);
         }
         boolean authenticated = passwordEncoder().matches(req.getPassword(), user.getPassword());
-        if(!authenticated){
+        if (!authenticated) {
             throw new AuthenException(ErrorCode.UNAUTHENTICATED);
         }
 
@@ -78,7 +84,21 @@ public class AuthenticationService {
                 .build();
     }
 
-    public IntrospectResponse introspect(IntrospectRequest req)  {
+    public AccountResponse resetPassword(ResetPasswordRequest req) {
+        Account account = accountRepository.findByEmail(req.getEmail()).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+        boolean authenticated = passwordEncoder().matches(req.getPassword(), account.getPassword());
+        if(!authenticated){
+            throw new AuthenException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+        //Handle mail here
+        //
+        account.setPassword(passwordEncoder().encode(req.getNewPassword()));
+
+        return accountMapper.toAccountResponse(accountRepository.save(account));
+    }
+
+
+    public IntrospectResponse introspect(IntrospectRequest req) {
         var token = req.getToken();
         boolean isValid = true;
 
