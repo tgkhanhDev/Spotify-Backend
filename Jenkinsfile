@@ -58,5 +58,12 @@ pipeline {
                 echo 'Docker image running on port 8005'
             }
         }
+
+        stage('Step 6: Remove Dangling Images') {
+            steps {
+                sh 'docker images -f "dangling=true" -q | xargs docker rmi'
+                echo 'Dangling images removed successfully'
+            }
+        }
     }
 }
