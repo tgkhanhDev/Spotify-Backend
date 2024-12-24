@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "playlistmusic")
@@ -21,7 +22,7 @@ public class PlaylistMusic {
     PlaylistMusicKey id;
 
     @Column(name = "addTime", nullable = false)
-    LocalDate addTime;
+    LocalDateTime addTime;
 
     @ManyToOne
     @MapsId("playlistId") // Maps the playlistId from PlaylistMusicKey

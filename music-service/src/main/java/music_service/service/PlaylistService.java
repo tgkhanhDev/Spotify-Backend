@@ -1,5 +1,6 @@
 package music_service.service;
 
+import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
 import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
 import music_service.dto.playlistDto.response.PlaylistOverallResponse;
 import music_service.dto.playlistDto.response.PlaylistResponse;
@@ -16,5 +17,9 @@ public interface PlaylistService {
     PlaylistResponse deletePlaylistById(UUID playlistId);
 
     PlaylistResponse updatePlaylistInfo(UpdatePlaylistRequest playlist);
+
+    PlaylistResponse addPlaylistMusic(UpdatePlaylistMusicRequest request);
+
+    PlaylistResponse removePlaylistMusic(UpdatePlaylistMusicRequest request);
 
 }

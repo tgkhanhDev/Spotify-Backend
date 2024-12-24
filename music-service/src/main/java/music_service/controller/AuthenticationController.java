@@ -1,14 +1,16 @@
 package music_service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import music_service.dto.authenticationDto.request.AuthenticationRequest;
-import music_service.dto.authenticationDto.request.LoginRequest;
 import music_service.dto.authenticationDto.response.AuthenticationResponse;
 import music_service.service.AuthenticationService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +26,27 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login User", description = "user1@example.com   123123")
-    public AuthenticationResponse login(AuthenticationRequest authenticationRequest){
+    @Operation(
+            summary = "Login User",
+            description = "Use the example credentials to test the login functionality.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "User login credentials",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Login Example",
+                                    value = """
+                                            {
+                                              "email": "user1@example.com",
+                                              "password": "123123"
+                                            }
+                                            """
+                            )
+                    )
+            )
+    )
+    public AuthenticationResponse login(
+            @RequestBody AuthenticationRequest authenticationRequest) {
         return authenticationService.authenticate(authenticationRequest);
     }
 }

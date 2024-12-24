@@ -3,6 +3,7 @@ package music_service.dto.playlistDto.response;
 import music_service.dto.musicDto.response.MusicResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import music_service.dto.playlistMusicDto.response.PlaylistMusicOnlyMusicResponse;
 import music_service.model.PlaylistMusic;
 
 import java.util.List;
@@ -22,5 +23,5 @@ public class PlaylistResponse {
     int songCount;
     //DateAdd
     String description;
-    List<PlaylistMusic> musics;
+    List<PlaylistMusicOnlyMusicResponse> musics;
 }

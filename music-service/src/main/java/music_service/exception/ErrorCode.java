@@ -26,6 +26,9 @@ public enum ErrorCode {
     UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
     USER_DOES_NOT_HAVE_PERMISSION(1008, "This user does not have permission", HttpStatus.FORBIDDEN),
     //Music
+    MUSIC_NOT_FOUND(2000, "Music not found", HttpStatus.NOT_FOUND),
+    MUSIC_ALREADY_IN_PLAYLIST(2001, "Music already in playlist", HttpStatus.BAD_REQUEST),
+    MUSIC_NOT_FOUND_IN_PLAYLIST(2001, "Music not found in playlist", HttpStatus.BAD_REQUEST),
     PLAYLIST_NOT_FOUND(2000, "Playlist not found", HttpStatus.NOT_FOUND);
 
 

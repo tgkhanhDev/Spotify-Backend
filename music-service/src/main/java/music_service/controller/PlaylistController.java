@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
 import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
 import music_service.dto.playlistDto.response.PlaylistOverallResponse;
 import music_service.dto.playlistDto.response.PlaylistResponse;
@@ -61,9 +62,15 @@ public class PlaylistController {
     }
 
     @PostMapping("/add-song")
-    public PlaylistResponse addMusicToPlaylist(UUID playlistId, UUID musicId) {
+    @Operation(summary = "*Add music to playlist")
+    public PlaylistResponse addMusicToPlaylist(@RequestBody() UpdatePlaylistMusicRequest request) {
+        return playlistService.addPlaylistMusic(request);
+    }
 
-        return null;
+    @DeleteMapping("/remove-song")
+    @Operation(summary = "*Remove music from playlist")
+    public PlaylistResponse removeMusicFromPlaylist(@RequestBody() UpdatePlaylistMusicRequest request) {
+        return playlistService.removePlaylistMusic(request);
     }
 
 
