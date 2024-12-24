@@ -6,18 +6,21 @@ pipeline {
     }
 
     stages {
-        stage('Check Versions') {
+
+        stage('Set Build Name') {
             steps {
-                echo 'Checking Java and Maven versions...'
-                sh 'java -version'  // Check Java version
-                sh 'mvn -v'  // Check Maven version
+                script {
+                    // Retrieve the commit message from the latest commit
+                    def commitMessage = sh(
+                        script: "git log -1 --pretty=%B",
+                        returnStdout: true
+                    ).trim()
+                    // Set the build display name to the commit message
+                    currentBuild.displayName = commitMessage
+                }
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Jenkins pipeline is redeploying!!!'
-            }
-        }
+
         stage('Step 1: Navigate to music-service') {
             steps {
                 dir('music-service') {
