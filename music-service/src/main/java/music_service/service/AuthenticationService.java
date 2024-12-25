@@ -49,12 +49,14 @@ public class AuthenticationService {
 
     final AccountRepository accountRepository;
     final AccountMapper accountMapper;
+    final EmailService emailService;
 
     @Autowired
-    public AuthenticationService(AccountRepository accountRepository, AccountMapper accountMapper) {
+    public AuthenticationService(AccountRepository accountRepository, AccountMapper accountMapper, EmailService emailService) {
         this.accountRepository = accountRepository;
 //        this.passwordEncoder = passwordEncoder;
         this.accountMapper = accountMapper;
+        this.emailService = emailService;
     }
 
     PasswordEncoder passwordEncoder() {

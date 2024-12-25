@@ -19,6 +19,7 @@ import music_service.model.PlaylistMusic;
 import music_service.model.embedKeys.PlaylistMusicKey;
 import music_service.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

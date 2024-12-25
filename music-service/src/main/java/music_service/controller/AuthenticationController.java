@@ -15,6 +15,7 @@ import music_service.dto.authenticationDto.response.AccountResponse;
 import music_service.dto.authenticationDto.response.AuthenticationResponse;
 import music_service.service.AccountService;
 import music_service.service.AuthenticationService;
+import music_service.service.EmailService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,6 +94,7 @@ public class AuthenticationController {
     @PostMapping("/reset")
     @Operation(summary = "Reset password")
     public AccountResponse resetPassword(ResetPasswordRequest request) {
+//        emailService.sendEmail(request.getEmail());
         return authenticationService.resetPassword(request);
     }
 }

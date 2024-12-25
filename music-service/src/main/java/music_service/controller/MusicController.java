@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,9 +30,9 @@ public class MusicController {
 
     @GetMapping("/get-all")
     @Operation(summary = "Test Only", description = "Test Only")
-//    @SecurityRequirement(name = "
-//    BearerAuth") // Apply security globally to the class
+    @Cacheable(cacheNames = "music", key = "#root.methodName")
     public List<MusicResponse> getAllMusic() {
+        System.out.println("No Cache");
         return musicService.getAllMusic();
     }
 }

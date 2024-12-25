@@ -11,6 +11,7 @@ import music_service.dto.playlistDto.response.PlaylistResponse;
 import music_service.model.Playlist;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import music_service.service.PlaylistService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class PlaylistController {
 
     @GetMapping("")
     @Operation(summary = "*Get all playlist by user")
+    @Cacheable(cacheNames = "playlist", key = "#root.methodName")
     public List<PlaylistOverallResponse> getAllPlaylistByUser() {
          return playlistService.getAllUserPlaylist();
 //        List<ArtistCollaboration> artistCollaboration = artistRepository.findAll();
