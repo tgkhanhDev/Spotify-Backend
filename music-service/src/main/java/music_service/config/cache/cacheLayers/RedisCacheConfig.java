@@ -1,5 +1,7 @@
 package music_service.config.cache.cacheLayers;
 
+import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -19,13 +21,25 @@ import java.time.Duration;
 @Configuration
 public class RedisCacheConfig {
 
+    @NotNull
+    @Value("${redis-host-name}")
+    protected String redisHostName;
+
+    @NotNull
+    @Value("${redis-port}")
+    protected int redisPort;
+
+    @NotNull
+    @Value("${redis-password}")
+    protected String redisPassword;
+
     //*Connection and cachingConfiguration
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        redisConfig.setHostName("localhost"); // Replace with your Redis host
-        redisConfig.setPort(6379);            // Replace with your Redis port
-        redisConfig.setPassword("170504"); // Replace with your Redis password
+        redisConfig.setHostName(redisHostName); //host
+        redisConfig.setPort(redisPort);            // port
+        redisConfig.setPassword(redisPassword); // password
         return new LettuceConnectionFactory(redisConfig);
     }
 
@@ -45,7 +59,6 @@ public class RedisCacheConfig {
     }
 
     //*===================================
-
 
     // Configure RedisTemplate for using
     @Bean

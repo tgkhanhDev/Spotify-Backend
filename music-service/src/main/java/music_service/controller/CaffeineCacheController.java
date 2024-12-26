@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/caffeine-cache")
-@Tag(name = "For Testing Cache L1", description = "For Caching")
+@Tag(name = "For Testing Cache L1", description = "For Caching Caffeine (Last for 15s)")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CaffeineCacheController {
 

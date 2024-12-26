@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/redis-cache")
-@Tag(name = "For Testing Cache L2", description = "For Caching Redis")
+@Tag(name = "For Testing Cache L2", description = "For Caching Redis (Last for 30s)")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RedisCacheController {
 
