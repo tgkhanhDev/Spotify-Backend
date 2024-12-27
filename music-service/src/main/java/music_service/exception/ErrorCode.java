@@ -28,6 +28,7 @@ public enum ErrorCode {
     MAIL_EXISTED(1009, "Email này đã được Sử Dụng Bởi Starboy98", HttpStatus.BAD_REQUEST),
     DATE_FORMAT_INVALID(1010, "Date format invalid", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH(1011, "Password does not match", HttpStatus.BAD_REQUEST),
+    DATE_OF_BIRTH_INVALID(1012, "Are you a time traveller?", HttpStatus.BAD_REQUEST),
     //Music
     MUSIC_NOT_FOUND(2000, "Music not found", HttpStatus.NOT_FOUND),
     MUSIC_ALREADY_IN_PLAYLIST(2001, "Music already in playlist", HttpStatus.BAD_REQUEST),

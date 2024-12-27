@@ -2,6 +2,7 @@ package music_service.exception;
 
 import music_service.dto.authenticationDto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -72,6 +73,11 @@ public class GlobalExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(com.fasterxml.jackson.databind.exc.InvalidFormatException.class)
+    public ResponseEntity<String> handleInvalidFormatException(Exception ex) {
+        return new ResponseEntity<>("Invalid date format. Expected format: dd/MM/yyyy", HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import music_service.dto.accountDto.request.UpdateAccountRequest;
+import music_service.dto.accountDto.request.UpdateUserInfoRequest;
 import music_service.dto.accountDto.response.CheckMailResponse;
 import music_service.dto.authenticationDto.request.AuthenticationRequest;
 import music_service.dto.authenticationDto.request.CheckEmailRequest;
@@ -13,8 +15,18 @@ import music_service.exception.AuthenException;
 import music_service.exception.ErrorCode;
 import music_service.mapper.AccountMapper;
 import music_service.model.Account;
+import music_service.model.Playlist;
 import music_service.repository.AccountRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -53,6 +65,64 @@ public class AccountServiceImpl implements AccountService {
         Account accountSaved = accountRepository.save(account);
 
         return accountMapper.toAccountResponse(accountSaved);
+    }
+
+    @Override
+    public AccountResponse updateUserInfo(UpdateUserInfoRequest request) {
+        //Check validity
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Get JWT token details
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+
+            //Update user info
+            Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+            LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            if(date.isAfter(LocalDate.now())) throw new AuthenException(ErrorCode.DATE_OF_BIRTH_INVALID);
+
+            account.setBirthday(date);
+//            account.setBirthday(request.getDateOfBirth());
+            account.setGender(request.isGender());
+            accountRepository.save(account);
+            return accountMapper.toAccountResponse(account);
+
+        } else {
+            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
+        }
+
+
+    }
+
+    @Override
+    public AccountResponse updateAccountInfo(UpdateAccountRequest request) {
+        //Check validity
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Get JWT token details
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+
+            //Update user info
+            Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+
+            account.setNickName(request.getName());
+            account.setAvatar(request.getAvatar());
+
+            accountRepository.save(account);
+            return accountMapper.toAccountResponse(account);
+
+        } else {
+            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
+        }
     }
 
 
