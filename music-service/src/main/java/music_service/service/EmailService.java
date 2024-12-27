@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import music_service.dto.authenticationDto.response.EmailAuthenResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,11 @@ public class EmailService {
     @Value("${email-app-password}")
     protected String APP_PASSWORD;
 
+    @Autowired
+    RedisCacheService redisCacheService;
+
     //Save to cache :D
-    public int sendEmail(String recipientEmail) {
+    public boolean sendEmail(String recipientEmail) {
 
         // Set up email properties
         Properties properties = new Properties();
@@ -65,12 +70,46 @@ public class EmailService {
 
             // Send email
             Transport.send(message);
-            System.out.println("Email sent successfully!");
+//            System.out.println("Email sent successfully!");
+
+            // Save to cache to verify
+            redisCacheService.saveToCache(recipientEmail+"::FORGET", randomCode, 300);
 
         } catch (MessagingException e) {
             e.printStackTrace();
             System.out.println("Error while sending email.");
+            return false;
         }
-        return randomCode;
+        return true;
+    }
+
+    public EmailAuthenResponse verifyCode(String email, int code) {
+        var redisCode = redisCacheService.getFromCache(email+"::FORGET");
+        if (redisCode == null) {
+            return EmailAuthenResponse
+                    .builder()
+                    .code(404)
+                    .message("Code Expired")
+                    .isValid(false)
+                    .build();
+        }
+
+        if (redisCacheService.getFromCache(email+"::FORGET") != null) {
+            if (redisCacheService.getFromCache(email+"::FORGET").equals(code)) {
+                redisCacheService.deleteFromCache(email+"::FORGET");
+                return EmailAuthenResponse
+                        .builder()
+                        .code(200)
+                        .message("Success")
+                        .isValid(true)
+                        .build();
+            }
+        }
+        return EmailAuthenResponse
+                .builder()
+                .code(400)
+                .message("Incorrect code")
+                .isValid(false)
+                .build();
     }
 }

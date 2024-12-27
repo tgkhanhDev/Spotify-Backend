@@ -12,14 +12,14 @@ import music_service.dto.authenticationDto.request.CheckEmailRequest;
 import music_service.dto.authenticationDto.request.CreateAccountRequest;
 import music_service.dto.authenticationDto.request.ResetPasswordRequest;
 import music_service.dto.authenticationDto.response.AccountResponse;
+import music_service.dto.authenticationDto.response.ApiResponse;
 import music_service.dto.authenticationDto.response.AuthenticationResponse;
+import music_service.dto.authenticationDto.response.EmailAuthenResponse;
 import music_service.service.AccountService;
 import music_service.service.AuthenticationService;
 import music_service.service.EmailService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,10 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     AuthenticationService authenticationService;
     AccountService accountService;
+    EmailService emailService;
 
-    public AuthenticationController(AuthenticationService authenticationService, AccountService accountService) {
+    @Autowired
+    public AuthenticationController(AuthenticationService authenticationService, AccountService accountService, EmailService emailService) {
         this.authenticationService = authenticationService;
         this.accountService = accountService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/login")
@@ -94,7 +97,47 @@ public class AuthenticationController {
     @PostMapping("/reset")
     @Operation(summary = "Reset password")
     public AccountResponse resetPassword(ResetPasswordRequest request) {
-//        emailService.sendEmail(request.getEmail());
         return authenticationService.resetPassword(request);
+    }
+
+    @PostMapping("/forget")
+    @Operation(summary = "Forget password (This action will send email to reset password)")
+    public EmailAuthenResponse forgetPassword(@RequestParam String email) {
+        CheckMailResponse checkMailResponse = accountService.checkMail(CheckEmailRequest.builder().email(email).build());
+
+        if (!checkMailResponse.isExisted()) {
+            return EmailAuthenResponse
+                    .builder()
+                    .code(404)
+                    .message("Email Not Found")
+                    .isValid(checkMailResponse.isExisted())
+                    .build();
+        }
+
+
+        return EmailAuthenResponse
+                .builder()
+                .code(200)
+                .message("Success")
+                .isValid(emailService.sendEmail(email))
+                .build();
+    }
+
+    @PostMapping("/forget-confirm")
+    @Operation(summary = "Confirm code sent to email (Last for 5 minutes)")
+    public EmailAuthenResponse forgetPasswordConfirm(@RequestParam String email, @RequestParam int code) {
+
+        CheckMailResponse checkMailResponse = accountService.checkMail(CheckEmailRequest.builder().email(email).build());
+
+        if (!checkMailResponse.isExisted()) {
+            return EmailAuthenResponse
+                    .builder()
+                    .code(404)
+                    .message("Email Not Found")
+                    .isValid(checkMailResponse.isExisted())
+                    .build();
+        }
+
+        return emailService.verifyCode(email, code);
     }
 }
