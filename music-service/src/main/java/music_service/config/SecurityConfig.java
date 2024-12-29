@@ -34,6 +34,7 @@ public class SecurityConfig {
     };
 
     private final String[] PUBLIC_ENDPOINTS_POST = {
+            "/v1/file"
 //            "/auth/login"
     };
 

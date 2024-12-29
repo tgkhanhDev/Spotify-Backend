@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -78,6 +79,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(com.fasterxml.jackson.databind.exc.InvalidFormatException.class)
     public ResponseEntity<String> handleInvalidFormatException(Exception ex) {
         return new ResponseEntity<>("Invalid date format. Expected format: dd/MM/yyyy", HttpStatus.BAD_REQUEST);
+    }
+
+    //File Exception
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body("File size exceeds the maximum allowed limit. File size should be less than 10MB.");
     }
 
 }

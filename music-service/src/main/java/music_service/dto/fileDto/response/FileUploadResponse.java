@@ -1,16 +1,16 @@
-package music_service.dto.accountDto.response;
+package music_service.dto.fileDto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountArtistResponse {
-    UUID id;
-    String nickName;
+public class FileUploadResponse{
+        String id;
+        String name;
+        String url;
+        Long duration;
 }
