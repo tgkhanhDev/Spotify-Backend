@@ -2,10 +2,11 @@
 FROM openjdk:17-jdk-slim
 
 # Working directory inside the container
-WORKDIR /root/music-service
+WORKDIR /root/media-service
 
 # Copy file builded by Maven
-COPY target/*.jar authen-services-3.3.5.jar
+COPY target/*.jar media-service.jar
+COPY .env .
 
 # Run the JAR file
-ENTRYPOINT ["java", "-jar", "authen-services-3.3.5.jar"]
+ENTRYPOINT ["java", "-jar", "media-service.jar"]

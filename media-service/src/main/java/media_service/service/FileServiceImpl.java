@@ -8,86 +8,195 @@ import lombok.extern.slf4j.Slf4j;
 import media_service.dto.fileDto.request.FileUploadRequest;
 import media_service.dto.fileDto.response.FileDetailResponse;
 import media_service.dto.fileDto.response.FileUploadResponse;
+import media_service.exception.AuthenException;
 import media_service.exception.ErrorCode;
 import media_service.exception.MusicException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileServiceImpl implements FileService {
 
+    //    @Value("${music-file-path}")
     @NotNull
-    @Value("${music-file-path}")
+    @Value("${dev-music-file-path}")
     protected String musicFilePath;
 
-    protected String rootFilePath =  System.getProperty("user.home");
+    @NotNull
+    @Value("${dev-image-file-path}")
+    protected String imageFilePath;
 
+    @NotNull
+    @Value("${url-music-deploy}")
+    protected String musicDeployPath;
+
+    @NotNull
+    @Value("${url-image-deploy}")
+    protected String imageDeployPath;
+
+    protected String rootFilePath = System.getProperty("user.home");
+    //File:name: UUID Token_LocalDateTime
     @Override
-    public FileUploadResponse uploadFile(FileUploadRequest request) {
+    public FileUploadResponse uploadFileAudio(FileUploadRequest request) {
 
-            FileDetailResponse fileDetail = getAudioDetail(request.getFile());
+        //Extract token from request
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
 
-            if(request.getName() != null && !request.getName().trim().isEmpty()){
-                fileDetail.setName(request.getName());
+        UUID userIdClaims = null;
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        }
+
+        //Define file name for save
+        String fileName = userIdClaims.toString()+"_"+LocalDateTime.now();
+
+        // Define upload directory
+        String filePath = rootFilePath + musicFilePath;
+        String songName = request.getFile().getOriginalFilename();
+
+        //check origin
+        if (request.getFile().isEmpty() || !request.getFile().getOriginalFilename().endsWith(".mp3") || !checkValidOriginOfAudioFile(request.getFile())) {
+            throw new MusicException(ErrorCode.INVALID_MUSIC_FILE);
+        }
+
+        try {
+            //songName
+            if(request.getName() != null && !request.getName().trim().isEmpty()) {
+                    songName = request.getName();
             }
 
-            System.out.println("final File: " + fileDetail.toString());
+            //Add .ext for fileName
+            try {
+                String ext = request.getFile().getOriginalFilename().split("\\.")[1];
+                fileName = fileName + "." + ext;
+            } catch (Exception e){
+                throw new MusicException(ErrorCode.INVALID_IMAGE_FILE);
+            }
 
-            System.out.println("filePath: " + rootFilePath + musicFilePath);
+            String tmpPath = "/tmp/" + fileName;
+            File tempFile = new File(tmpPath);
+            request.getFile().transferTo(tempFile);
+
+            // Process the temp file
+            Mp3File mp3File = new Mp3File(tempFile);
+            long durationInSeconds = mp3File.getLengthInSeconds();
+
+            // Then save the file to its final destination
+            String entirePath = filePath + fileName;
+            File savePath = new File(entirePath);
+            Files.copy(tempFile.toPath(), savePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            return FileUploadResponse.builder()
+                    .url(musicDeployPath + fileName)
+                    .fileName(fileName)
+                    .name(songName)
+                    .duration(durationInSeconds)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("File Upload error: ", e);
+            throw new MusicException(ErrorCode.ERROR_WHEN_UPLOAD);
+        }
+
+    }
+
+    @Override
+    public FileUploadResponse uploadFileImage(FileUploadRequest request) {
+
+        //Extract token from request
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
+
+        UUID userIdClaims = null;
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        }
+
+        //Define file name for save
+        String fileName = userIdClaims.toString()+"_"+LocalDateTime.now();
 
 
-        return FileUploadResponse.builder()
-                .name(rootFilePath + musicFilePath)
-                .build();
+        // Define upload directory
+        String filePath = rootFilePath + imageFilePath;
+        String imageName = request.getFile().getOriginalFilename();
+
+
+        //check origin
+        try {
+            BufferedImage image = ImageIO.read(request.getFile().getInputStream());
+            if (image == null) {
+                throw new MusicException(ErrorCode.INVALID_IMAGE_FILE);
+            }
+        }catch (Exception e){
+            log.error("Error when extract image: "+ e.getMessage());
+            throw new MusicException(ErrorCode.INVALID_IMAGE_FILE);
+        }
+
+
+        try {
+            //imageName
+            if(request.getName() != null && !request.getName().trim().isEmpty()) {
+                imageName = request.getName();
+            }
+
+            //Add .ext for fileName
+            try {
+                String ext = request.getFile().getOriginalFilename().split("\\.")[1];
+                fileName = fileName + "." + ext;
+            } catch (Exception e){
+                throw new MusicException(ErrorCode.INVALID_IMAGE_FILE);
+            }
+
+            String entirePath = filePath + fileName;
+            System.out.println("FilePathImage: " + entirePath);
+            request.getFile().transferTo(new File(entirePath));
+
+            return FileUploadResponse.builder()
+                    .url(imageDeployPath + fileName)
+                    .fileName(fileName)
+                    .name(imageName)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("File Upload error: ", e);
+            throw new MusicException(ErrorCode.ERROR_WHEN_UPLOAD);
+        }
+
     }
 
     private boolean checkValidOriginOfAudioFile(MultipartFile file) {
         Tika tika = new Tika();
         try {
             String detectedType = tika.detect(file.getInputStream());
+//            System.out.println("detectedType: " + detectedType);
             boolean check = detectedType.equals("audio/mpeg") || detectedType.equals("audio/mp3");
             return check;
         } catch (Exception e) {
             throw new MusicException(ErrorCode.INVALID_MUSIC_FILE);
         }
     }
-    private FileDetailResponse getAudioDetail(MultipartFile file) {
-
-        if ( file.isEmpty() || !file.getOriginalFilename().endsWith(".mp3") || !checkValidOriginOfAudioFile(file) ) {
-            throw new MusicException(ErrorCode.INVALID_MUSIC_FILE);
-        }
-
-        try {
-
-            // Save the file to a temporary location
-            java.io.File tempFile = java.io.File.createTempFile("uploaded", ".mp3");
-            file.transferTo(tempFile);
-
-            // Read MP3 file using Mp3agic
-            Mp3File mp3File = new Mp3File(tempFile);
-
-//            if (mp3File.hasId3v1Tag() || mp3File.hasId3v2Tag()) {
-            long durationInSeconds = mp3File.getLengthInSeconds();
-
-            return FileDetailResponse.builder()
-                    .name(file.getOriginalFilename())
-                    .duration(durationInSeconds)
-                    .uploadTime(LocalDateTime.now())
-                    .build();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MusicException(ErrorCode.ERROR_WHEN_UPLOAD);
-        }
-
-    }
-
 
 }

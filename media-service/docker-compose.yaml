@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  media-service:
+    image: media-service
+    build:
+      context: . # Path to your Dockerfile
+      dockerfile: Dockerfile # Name of your Dockerfile
+    volumes:
+      -  ${MUSICS_PATH}:/root/storage/musics
+      -  ${IMAGES_PATH}:/root/storage/images
+    ports:
+      - "8080:8080" # Map container's port to host's port
+    restart: unless-stopped # Automatically restart the container unless stopped manually
+    env_file:
+      - .env
