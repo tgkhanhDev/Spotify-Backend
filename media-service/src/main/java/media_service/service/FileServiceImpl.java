@@ -35,11 +35,11 @@ public class FileServiceImpl implements FileService {
 
     //    @Value("${music-file-path}")
     @NotNull
-    @Value("${dev-music-file-path}")
+    @Value("${music-file-path}")
     protected String musicFilePath;
 
     @NotNull
-    @Value("${dev-image-file-path}")
+    @Value("${image-file-path}")
     protected String imageFilePath;
 
     @NotNull

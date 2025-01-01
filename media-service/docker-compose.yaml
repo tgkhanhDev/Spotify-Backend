@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   media-service:
-    image: media-service
+    image: tgkhanhdev/media-upload-service:test-v1
     build:
       context: . # Path to your Dockerfile
       dockerfile: Dockerfile # Name of your Dockerfile
