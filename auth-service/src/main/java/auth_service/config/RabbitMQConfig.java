@@ -1,4 +1,4 @@
-package api_gateway.config;
+package auth_service.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -10,56 +10,28 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    @Value("${rabbitmq.exchange.name}")
-    private String exchange;
+    @Value("${rabbitmq.auth.queue.name}")
+    private String authQueue;
 
-    //? DEAD LETTER
-    @Value("${rabbitmq.dlq.exchange.name}")
-    private String dlqExchange;
     @Value("${rabbitmq.error.queue.name}")
     private String deadQueue;
+
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+    @Value("${rabbitmq.dlq.exchange.name}")
+    private String dlqExchange;
+
+    @Value("${rabbitmq.routing.key}")
+    private String routingKey;
     @Value("${rabbitmq.dlq.routing.key}")
     private String dlqRoutingKey;
 
-    //TODO: Authen
-    @Value("${rabbitmq.auth.queue.name}")
-    private String authQueue;
-    @Value("${rabbitmq.auth.routing.key}")
-    private String routingKey;
-
-    //TODO: Product Service
-    @Value("${rabbitmq.product.queue.name}")
-    private String productQueue;
-    @Value("${rabbitmq.product.routing.key}")
-    private String productRoutingKey;
-
-    //TODO: MediaIO Service
-    @Value("${rabbitmq.mediaIO.queue.name}")
-    private String mediaIOQueue;
-    @Value("${rabbitmq.mediaIO.routing.key}")
-    private String mediaIORoutingKey;
 
 
     //!spring bean for rabbitmq queue
     @Bean
     public Queue authQueue() {
         return QueueBuilder.durable(authQueue)
-                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
-                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
-                .build();
-    }
-
-    @Bean
-    public Queue productQueue() {
-        return QueueBuilder.durable(productQueue)
-                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
-                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
-                .build();
-    }
-
-    @Bean
-    public Queue mediaIOQueue() {
-        return QueueBuilder.durable(mediaIOQueue)
                 .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
                 .build();
@@ -83,24 +55,10 @@ public class RabbitMQConfig {
 
     //!binding between queue and exchange using routing key
     @Bean
-    public Binding authBinding() {
+    public Binding authQueueBinding() {
         return BindingBuilder.bind(authQueue())
                 .to(exchange())
                 .with(routingKey);
-    }
-
-    @Bean
-    public Binding productBinding() {
-        return BindingBuilder.bind(productQueue())
-                .to(exchange())
-                .with(productRoutingKey);
-    }
-
-    @Bean
-    public Binding mediaIOBinding() {
-        return BindingBuilder.bind(mediaIOQueue())
-                .to(exchange())
-                .with(mediaIORoutingKey);
     }
 
     @Bean
@@ -109,8 +67,8 @@ public class RabbitMQConfig {
                 .to(dlqExchange())
                 .with(dlqRoutingKey);
     }
-
-    //Config for communicating via JSON
+    //
+    //!Config for communicating via JSON
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
@@ -122,5 +80,4 @@ public class RabbitMQConfig {
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
     }
-
 }

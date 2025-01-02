@@ -1,23 +1,20 @@
-package music_service.service;
+package auth_service.service;
 
+import auth_service.exception.AuthenException;
+import auth_service.exception.ErrorCode;
+import auth_service.mapper.AccountMapper;
+import auth_service.model.Account;
+import auth_service.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import music_service.dto.accountDto.request.UpdateAccountRequest;
-import music_service.dto.accountDto.request.UpdateUserInfoRequest;
-import music_service.dto.accountDto.response.CheckMailResponse;
-import music_service.dto.authenticationDto.request.AuthenticationRequest;
-import music_service.dto.authenticationDto.request.CheckEmailRequest;
-import music_service.dto.authenticationDto.request.CreateAccountRequest;
-import music_service.dto.authenticationDto.response.AccountResponse;
-import music_service.exception.AuthenException;
-import music_service.exception.ErrorCode;
-import music_service.mapper.AccountMapper;
-import music_service.model.Account;
-import music_service.model.Playlist;
-import music_service.repository.AccountRepository;
-import org.springframework.data.domain.Sort;
+import auth_service.dto.accountDto.request.UpdateAccountRequest;
+import auth_service.dto.accountDto.request.UpdateUserInfoRequest;
+import auth_service.dto.accountDto.response.CheckMailResponse;
+import auth_service.dto.authenticationDto.request.CheckEmailRequest;
+import auth_service.dto.authenticationDto.request.CreateAccountRequest;
+import auth_service.dto.authenticationDto.response.AccountResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -76,7 +72,10 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // Get JWT token details
-       W
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+
             //Update user info
             Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
             LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));

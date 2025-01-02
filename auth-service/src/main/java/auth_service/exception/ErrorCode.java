@@ -1,4 +1,4 @@
-package api_gateway.exception;
+package auth_service.exception;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
-    SERVER_NOT_RESPONSE(9998, "Server not response", HttpStatus.INTERNAL_SERVER_ERROR),
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error. Please report this to Khanh.", HttpStatus.INTERNAL_SERVER_ERROR),
     NULL_VALUE(1000, "Null value", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),
@@ -35,6 +34,7 @@ public enum ErrorCode {
     //Music
     MUSIC_NOT_FOUND(2000, "Music not found", HttpStatus.NOT_FOUND),
     INVALID_MUSIC_FILE(2001, "System only support .mp3 file, please contact the administrator", HttpStatus.BAD_REQUEST),
+    INVALID_IMAGE_FILE(2001, "Image file is invalid", HttpStatus.BAD_REQUEST),
     ERROR_WHEN_UPLOAD(2001, "An error occurred while processing the audio file", HttpStatus.BAD_REQUEST),
     MUSIC_ALREADY_IN_PLAYLIST(2001, "Music already in playlist", HttpStatus.BAD_REQUEST),
     MUSIC_NOT_FOUND_IN_PLAYLIST(2001, "Music not found in playlist", HttpStatus.BAD_REQUEST),
