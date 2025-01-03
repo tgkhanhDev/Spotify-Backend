@@ -21,11 +21,15 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.dlq.routing.key}")
     private String dlqRoutingKey;
 
-    //TODO: Authen
+    //TODO: Auth Service
     @Value("${rabbitmq.auth.queue.name}")
     private String authQueue;
     @Value("${rabbitmq.auth.routing.key}")
-    private String routingKey;
+    private String authRoutingKey;
+    @Value("${rabbitmq.user.queue.name}")
+    private String userQueue;
+    @Value("${rabbitmq.user.routing.key}")
+    private String userRoutingKey;
 
     //TODO: Product Service
     @Value("${rabbitmq.product.queue.name}")
@@ -44,6 +48,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue authQueue() {
         return QueueBuilder.durable(authQueue)
+                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
+                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
+                .build();
+    }
+
+    @Bean
+    public Queue userQueue() {
+        return QueueBuilder.durable(userQueue)
                 .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
                 .build();
@@ -86,7 +98,14 @@ public class RabbitMQConfig {
     public Binding authBinding() {
         return BindingBuilder.bind(authQueue())
                 .to(exchange())
-                .with(routingKey);
+                .with(authRoutingKey);
+    }
+
+    @Bean
+    public Binding userBinding() {
+        return BindingBuilder.bind(userQueue())
+                .to(exchange())
+                .with(userRoutingKey);
     }
 
     @Bean

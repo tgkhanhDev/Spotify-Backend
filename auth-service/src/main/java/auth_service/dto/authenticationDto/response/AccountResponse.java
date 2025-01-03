@@ -1,5 +1,6 @@
 package auth_service.dto.authenticationDto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +16,7 @@ public class AccountResponse {
     UUID id;
     String email;
     boolean gender;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate birthday;
     String nickName;
     String avatar;

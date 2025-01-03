@@ -40,7 +40,7 @@ public class AuthProducer {
     }
 
     @RabbitListener(queues = "${rabbitmq.auth.queue.name}")
-    public void AuthenQueueListener(Object payload, Message message) throws Exception {
+    public void authenQueueListener(Object payload, Message message) throws Exception {
 
         String correlationId = message.getMessageProperties().getCorrelationId();
         String replyToQueue = message.getMessageProperties().getReplyTo();

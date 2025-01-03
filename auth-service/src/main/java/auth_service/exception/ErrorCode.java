@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
+    INVALID_TOKEN(9997, "Token has expired or invalid", HttpStatus.UNAUTHORIZED),
+    SERVER_NOT_RESPONSE(9998, "Server not response", HttpStatus.INTERNAL_SERVER_ERROR),
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error. Please report this to Khanh.", HttpStatus.INTERNAL_SERVER_ERROR),
     NULL_VALUE(1000, "Null value", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),

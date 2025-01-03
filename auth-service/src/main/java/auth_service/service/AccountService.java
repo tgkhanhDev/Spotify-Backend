@@ -12,8 +12,8 @@ public interface AccountService {
 
     AccountResponse registerAccount(CreateAccountRequest createAccountRequest);
 
-    AccountResponse updateUserInfo(UpdateUserInfoRequest request);
+    AccountResponse updateUserInfo(UpdateUserInfoRequest request, String JwtToken);
 
-    AccountResponse updateAccountInfo(UpdateAccountRequest request);
+    AccountResponse updateAccountInfo(UpdateAccountRequest request, String JwtToken);
 
 }

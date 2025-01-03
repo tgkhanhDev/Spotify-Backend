@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -56,6 +57,7 @@ public class CustomMessageSender {
 
             // Step 2: Deserialize into a generic JsonNode for inspection
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); //handling LocalDatenew ObjectMapper()
             JsonNode jsonNode = objectMapper.readTree(messageBody);
 
             // Step 3: Check if it's an error ErrorCodeResponse
@@ -74,41 +76,6 @@ public class CustomMessageSender {
             log.error("Error: " + e.getMessage());
             throw new AuthenException(ErrorCode.CAN_NOT_DESERIALIZE);
         }
-    }
-
-    public void sendErrorMessageToProducer(String correlationId, String replyToQueue, String message, int code) throws JsonProcessingException {
-        String res = new ObjectMapper().writeValueAsString
-                (ApiResponse.builder()
-                        .data(null)
-                        .message(message)
-                        .code(code)
-                        .build());
-
-        rabbitTemplate.convertAndSend(
-                "",
-                replyToQueue,
-                res,
-                m -> {
-                    m.getMessageProperties().setCorrelationId(correlationId);
-                    return m;
-                }
-        );
-    }
-
-    public <T> void sendResponseDataToProducer(String correlationId, String replyToQueue, T data) throws JsonProcessingException {
-        // Step 1: Serialize the data to JSON bytes
-        byte[] res = new ObjectMapper().writeValueAsBytes(data);
-
-        // Step 2: Send the message using RabbitTemplate
-        rabbitTemplate.convertAndSend(
-                "",
-                replyToQueue,
-                res,
-                m -> {
-                    m.getMessageProperties().setCorrelationId(correlationId);
-                    return m;
-                }
-        );
     }
 
 }

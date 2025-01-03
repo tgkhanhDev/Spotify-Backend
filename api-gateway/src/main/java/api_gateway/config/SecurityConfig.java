@@ -5,6 +5,7 @@ import api_gateway.config.JWT.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +15,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-//@EnableMethodSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final String[] AUTH_WHITELIST = {
@@ -54,7 +55,8 @@ public class SecurityConfig {
                 .requestMatchers(PUBLIC_ENDPOINTS_GET).permitAll()
                 //                        .requestMatchers(HttpMethod.GET, "/account").hasAuthority("ROLE_ADMIN")
                 .anyRequest()
-                .authenticated());
+                .authenticated()
+        );
 
         // OAuth2 //decoder: decoder is a interface, and use for decode a token
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer

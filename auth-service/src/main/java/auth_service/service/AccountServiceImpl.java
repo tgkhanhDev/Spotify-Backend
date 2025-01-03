@@ -1,5 +1,6 @@
 package auth_service.service;
 
+import auth_service.config.JWT.CustomJwtDecoder;
 import auth_service.exception.AuthenException;
 import auth_service.exception.ErrorCode;
 import auth_service.mapper.AccountMapper;
@@ -32,18 +33,20 @@ public class AccountServiceImpl implements AccountService {
     AuthenticationService authenticationService;
     AccountRepository accountRepository;
     AccountMapper accountMapper;
+    CustomJwtDecoder customJwtDecoder;
 
-    public AccountServiceImpl(AuthenticationService authenticationService, AccountRepository accountRepository, AccountMapper accountMapper) {
+    public AccountServiceImpl(AuthenticationService authenticationService, AccountRepository accountRepository, AccountMapper accountMapper, CustomJwtDecoder customJwtDecoder) {
         this.authenticationService = authenticationService;
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
+        this.customJwtDecoder = customJwtDecoder;
     }
 
     @Override
     public CheckMailResponse checkMail(CheckEmailRequest email) {
         boolean isMailExist = accountRepository.existsByEmail(email.getEmail());
 
-        if(isMailExist) return new CheckMailResponse(true, ErrorCode.MAIL_EXISTED.getMessage());
+        if (isMailExist) return new CheckMailResponse(true, ErrorCode.MAIL_EXISTED.getMessage());
 
         return new CheckMailResponse(isMailExist, "Email này phù hợp!");
     }
@@ -51,7 +54,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountResponse registerAccount(CreateAccountRequest createAccountRequest) {
-        if(accountRepository.existsByEmail(createAccountRequest.getEmail())) throw new AuthenException(ErrorCode.MAIL_EXISTED);
+        if (accountRepository.existsByEmail(createAccountRequest.getEmail()))
+            throw new AuthenException(ErrorCode.MAIL_EXISTED);
 
         Account account = accountMapper.toAccount(createAccountRequest);
         account.setSubcribe(false);
@@ -63,61 +67,38 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateUserInfo(UpdateUserInfoRequest request) {
-        //Check validity
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
+    public AccountResponse updateUserInfo(UpdateUserInfoRequest request, String jwtToken) {
+        //Decode JWT
+        Jwt jwt = customJwtDecoder.decode(jwtToken); //already check validity
+        UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
 
-        // Get JWT token details
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        //Update user info
+        Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+        LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        if (date.isAfter(LocalDate.now())) throw new AuthenException(ErrorCode.DATE_OF_BIRTH_INVALID);
 
-            //Update user info
-            Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
-            LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            if(date.isAfter(LocalDate.now())) throw new AuthenException(ErrorCode.DATE_OF_BIRTH_INVALID);
-
-            account.setBirthday(date);
-//            account.setBirthday(request.getDateOfBirth());
-            account.setGender(request.isGender());
-            accountRepository.save(account);
-            return accountMapper.toAccountResponse(account);
-
-        } else {
-            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
-        }
-
+        account.setBirthday(date);
+        account.setGender(request.isGender());
+        accountRepository.save(account);
+        return accountMapper.toAccountResponse(account);
 
     }
 
     @Override
-    public AccountResponse updateAccountInfo(UpdateAccountRequest request) {
-        //Check validity
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
+    public AccountResponse updateAccountInfo(UpdateAccountRequest request, String jwtToken) {
+        //Decode JWT
+        Jwt jwt = customJwtDecoder.decode(jwtToken); //already check validity
+        UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
 
-        // Get JWT token details
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        //Update user info
+        Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
 
-            //Update user info
-            Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+        account.setNickName(request.getName());
+        account.setAvatar(request.getAvatar());
 
-            account.setNickName(request.getName());
-            account.setAvatar(request.getAvatar());
+        accountRepository.save(account);
+        return accountMapper.toAccountResponse(account);
 
-            accountRepository.save(account);
-            return accountMapper.toAccountResponse(account);
-
-        } else {
-            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
-        }
     }
 
 

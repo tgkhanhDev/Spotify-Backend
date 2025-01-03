@@ -35,7 +35,8 @@ public class AccountController {
             summary = "Update user detail info"
     )
     public AccountResponse updateUserInfo(@RequestBody @Valid UpdateUserInfoRequest request) {
-        return accountService.updateUserInfo(request);
+//        return accountService.updateUserInfo(request);
+        return null;
     }
 
     @PostMapping("/updateAccount")
@@ -43,7 +44,8 @@ public class AccountController {
             summary = "Update account detail info"
     )
     public AccountResponse updateAccountInfo(@RequestBody @Valid UpdateAccountRequest request) {
-        return accountService.updateAccountInfo(request);
+//        return accountService.updateAccountInfo(request);
+        return null;
     }
 
 }

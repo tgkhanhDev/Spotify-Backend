@@ -97,7 +97,6 @@ public class AuthenticationController {
     }
 
 
-
     @PostMapping("/checkEmail")
     @Operation(summary = "Check Email")
     public CheckMailResponse checkEmail(@RequestBody() CheckEmailRequest emailRequest) {
@@ -255,27 +254,7 @@ public class AuthenticationController {
         byte[] responseMessage = (byte[]) rabbitTemplate.receiveAndConvert(replyQueueName, 5000); // Wait for up to 5 seconds
         EmailAuthenResponse emailAuthenResponse = customMessageSender.decodeAndDeserializeBytesResponse(responseMessage, EmailAuthenResponse.class);
         return emailAuthenResponse;
-
-
-//        CheckMailResponse checkMailResponse = accountService.checkMail(CheckEmailRequest.builder().email(email).build());
-
-//        if (!checkMailResponse.isExisted()) {
-//            return EmailAuthenResponse
-//                    .builder()
-//                    .code(404)
-//                    .message("Email Not Found")
-//                    .isValid(checkMailResponse.isExisted())
-//                    .build();
-        }
-//
-//
-//        return EmailAuthenResponse
-//                .builder()
-//                .code(200)
-//                .message("Success")
-//                .isValid(emailService.sendEmail(email))
-//                .build();
-//    }
+    }
 
     @PostMapping("/forget-confirm")
     @Operation(summary = "Confirm code sent to email (Last for 5 minutes)")
@@ -312,17 +291,5 @@ public class AuthenticationController {
         EmailAuthenResponse emailAuthenResponse = customMessageSender.decodeAndDeserializeBytesResponse(responseMessage, EmailAuthenResponse.class);
         return emailAuthenResponse;
 
-//        CheckMailResponse checkMailResponse = accountService.checkMail(CheckEmailRequest.builder().email(email).build());
-//
-//        if (!checkMailResponse.isExisted()) {
-//            return EmailAuthenResponse
-//                    .builder()
-//                    .code(404)
-//                    .message("Email Not Found")
-//                    .isValid(checkMailResponse.isExisted())
-//                    .build();
-//        }
-//
-//        return emailService.verifyCode(email, code);
     }
 }
