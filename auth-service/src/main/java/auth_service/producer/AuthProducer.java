@@ -47,24 +47,6 @@ public class AuthProducer {
 
         if (replyToQueue == null) {
             throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
-//            String res = new ObjectMapper().writeValueAsString(
-//                    ApiResponse.builder()
-//                            .data(null)
-//                            .message("QUEUE NULL")
-//                            .code(1500)
-//                            .build()
-//            );
-//
-//            rabbitTemplate.convertAndSend(
-//                    "",
-//                    replyToQueue,
-//                    res,
-//                    m -> {
-//                        m.getMessageProperties().setCorrelationId(correlationId);
-//                        return m;
-//                    }
-//            );
-//            return; // Exit early if reply queue is null
         }
 
         String key = message.getMessageProperties().getReceivedRoutingKey();
@@ -133,11 +115,13 @@ public class AuthProducer {
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }
         } catch (AuthenException e) {
+            log.info("Catch Exception: " + e.getMessage());
             // Handle AuthenException and send error response back to producer
-            customMessageSender.sendErrorMessageToProducer(correlationId, replyToQueue, e.getMessage(), e.getErrorCode().getCode());
+            customMessageSender.sendErrorCodeToProducer(correlationId, replyToQueue, e.getErrorCode());
         } catch (Exception e) {
+            log.error("Error Exception: " + e.getMessage());
             // Handle any other unexpected exceptions
-            customMessageSender.sendErrorMessageToProducer(correlationId, replyToQueue, e.getMessage(), 500);
+            customMessageSender.sendErrorCodeToProducer(correlationId, replyToQueue, ErrorCode.UNCATEGORIZED_EXCEPTION);
         }
 
 

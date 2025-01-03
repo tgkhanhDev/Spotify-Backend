@@ -51,7 +51,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountResponse registerAccount(CreateAccountRequest createAccountRequest) {
-
         if(accountRepository.existsByEmail(createAccountRequest.getEmail())) throw new AuthenException(ErrorCode.MAIL_EXISTED);
 
         Account account = accountMapper.toAccount(createAccountRequest);
