@@ -1,5 +1,6 @@
 package api_gateway.config;
 
+import api_gateway.config.JWT.CustomJwtDecoder;
 import api_gateway.dto.accountDto.response.CheckMailResponse;
 import api_gateway.dto.authenticationDto.response.ApiResponse;
 import api_gateway.exception.AuthenException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -26,6 +28,8 @@ public class CustomMessageSender {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     public <T> T decodeAndDeserializeBytes(byte[] message, Class<T> clazz) {
         try {
@@ -76,6 +80,47 @@ public class CustomMessageSender {
             log.error("Error: " + e.getMessage());
             throw new AuthenException(ErrorCode.CAN_NOT_DESERIALIZE);
         }
+    }
+
+
+    //RequestSender
+    public <P, R> R customEventSender(String exchange, String routingKey, boolean isRequireToken, P payload, Class<R> responseClass) {
+        String correlationId = UUID.randomUUID().toString();
+        String replyToQueue = rabbitTemplate.execute(channel -> channel.queueDeclare().getQueue());
+
+        // Serialize payload to bytes
+        byte[] payloadSent = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            payloadSent = objectMapper.writeValueAsBytes(payload);
+        } catch (Exception e) {
+            log.error("Error: {}", e.getMessage());
+            throw new AuthenException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+        }
+
+        // Send the request
+        rabbitTemplate.convertAndSend(
+                exchange,
+                routingKey,
+                payloadSent == null ? "" : payloadSent,
+                message -> {
+                    message.getMessageProperties().setContentType("application/json");
+                    message.getMessageProperties().setCorrelationId(correlationId);
+                    message.getMessageProperties().setReplyTo(replyToQueue); // Dynamic reply queue
+                    if (isRequireToken) {
+                        String jwtToken = customJwtDecoder.extractJwtToken();
+                        message.getMessageProperties().setHeader("Authorization", jwtToken);
+                    }
+                    return message;
+                }
+        );
+
+        // Receive and deserialize the response
+        byte[] responseMessage = (byte[]) rabbitTemplate.receiveAndConvert(replyToQueue, 5000); // Wait for up to 5 seconds
+        if (responseMessage == null) {
+            throw new AuthenException(ErrorCode.SERVER_NOT_RESPONSE);
+        }
+        return decodeAndDeserializeBytesResponse(responseMessage, responseClass);
     }
 
 }

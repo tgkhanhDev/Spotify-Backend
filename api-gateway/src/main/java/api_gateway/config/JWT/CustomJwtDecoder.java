@@ -1,11 +1,15 @@
 package api_gateway.config.JWT;
 
 
+import api_gateway.exception.AuthenException;
+import api_gateway.exception.ErrorCode;
 import api_gateway.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import api_gateway.dto.authenticationDto.request.IntrospectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -52,5 +56,26 @@ public class CustomJwtDecoder implements JwtDecoder {
     }
 
     // Done, Ctrl Z to know the bug
+    public String extractJwtToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if the authentication is valid
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Extract the Jwt object from the credentials (or principal)
+        Object credentials = authentication.getCredentials();
+
+        // Ensure the credentials are of type Jwt
+        if (credentials instanceof Jwt) {
+            Jwt jwt = (Jwt) credentials;
+            return jwt.getTokenValue();  // Get the raw JWT token as a string
+        }
+
+        // If the credentials aren't of type Jwt, throw an exception
+        throw new AuthenException(ErrorCode.INVALID_TOKEN);
+    }
+
 
 }
