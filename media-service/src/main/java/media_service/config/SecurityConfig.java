@@ -46,11 +46,11 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request.anyRequest().permitAll());
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        return httpSecurity.build();
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity.authorizeHttpRequests(request -> request.anyRequest().permitAll());
+//        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+//        return httpSecurity.build();
 
 //        httpSecurity.authorizeHttpRequests(request -> request
 //                .requestMatchers(AUTH_WHITELIST).permitAll()
@@ -71,7 +71,7 @@ public class SecurityConfig {
 //
 //        return httpSecurity.build();
 
-    }
+//    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

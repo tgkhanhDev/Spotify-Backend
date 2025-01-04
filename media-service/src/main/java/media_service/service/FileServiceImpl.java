@@ -33,13 +33,12 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileServiceImpl implements FileService {
 
-    //    @Value("${music-file-path}")
     @NotNull
-    @Value("${music-file-path}")
+    @Value("${dev-music-file-path}")
     protected String musicFilePath;
 
     @NotNull
-    @Value("${image-file-path}")
+    @Value("${dev-image-file-path}")
     protected String imageFilePath;
 
     @NotNull
@@ -53,7 +52,7 @@ public class FileServiceImpl implements FileService {
     protected String rootFilePath = System.getProperty("user.home");
     //File:name: UUID Token_LocalDateTime
     @Override
-    public FileUploadResponse uploadFileAudio(FileUploadRequest request) {
+    public FileUploadResponse uploadFileAudio(FileUploadRequest request, Jwt jwtToken) {
 
         //Extract token from request
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -121,7 +120,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileUploadResponse uploadFileImage(FileUploadRequest request) {
+    public FileUploadResponse uploadFileImage(FileUploadRequest request, Jwt jwtToken) {
 
         //Extract token from request
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

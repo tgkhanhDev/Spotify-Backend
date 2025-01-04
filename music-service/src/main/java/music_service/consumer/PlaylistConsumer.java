@@ -17,6 +17,7 @@ import music_service.service.PlaylistService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class PlaylistConsumer {
     CustomMessageSender customMessageSender;
     CustomJwtDecoder customJwtDecoder;
 
+    @Autowired
     public PlaylistConsumer(PlaylistService playlistService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender, CustomJwtDecoder customJwtDecoder) {
         this.playlistService = playlistService;
         this.rabbitTemplate = rabbitTemplate;

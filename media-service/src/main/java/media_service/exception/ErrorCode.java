@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
+    INVALID_TOKEN(9997, "Token has expired or invalid", HttpStatus.UNAUTHORIZED),
+    SERVER_NOT_RESPONSE(9998, "Server not response", HttpStatus.INTERNAL_SERVER_ERROR),
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error. Please report this to Khanh.", HttpStatus.INTERNAL_SERVER_ERROR),
     NULL_VALUE(1000, "Null value", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),
@@ -29,6 +31,8 @@ public enum ErrorCode {
     DATE_FORMAT_INVALID(1010, "Date format invalid", HttpStatus.BAD_REQUEST),
     PASSWORD_NOT_MATCH(1011, "Password does not match", HttpStatus.BAD_REQUEST),
     DATE_OF_BIRTH_INVALID(1012, "Are you a time traveller?", HttpStatus.BAD_REQUEST),
+    CAN_NOT_DESERIALIZE(1013, "Can not deserialize", HttpStatus.BAD_REQUEST),
+    INVALID_MESSAGE_QUEUE_REQUEST(1014, "Invalid message queue request", HttpStatus.BAD_REQUEST),
     //Music
     MUSIC_NOT_FOUND(2000, "Music not found", HttpStatus.NOT_FOUND),
     INVALID_MUSIC_FILE(2001, "System only support .mp3 file, please contact the administrator", HttpStatus.BAD_REQUEST),
@@ -37,7 +41,6 @@ public enum ErrorCode {
     MUSIC_ALREADY_IN_PLAYLIST(2001, "Music already in playlist", HttpStatus.BAD_REQUEST),
     MUSIC_NOT_FOUND_IN_PLAYLIST(2001, "Music not found in playlist", HttpStatus.BAD_REQUEST),
     PLAYLIST_NOT_FOUND(2000, "Playlist not found", HttpStatus.NOT_FOUND);
-
 
     int code;
     String message;

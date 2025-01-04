@@ -71,8 +71,6 @@ public class CustomJwtDecoder implements JwtDecoder {
 
         Jwt decodedJwt = this.decode(jwtToken);
 
-        System.out.println("DecodedJwt: " + decodedJwt);
-
         return decodedJwt;
     }
 

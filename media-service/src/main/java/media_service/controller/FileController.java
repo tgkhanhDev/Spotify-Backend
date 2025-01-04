@@ -20,43 +20,43 @@ import java.io.IOException;
 @Tag(name = "File")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileController {
-    FileService fileService;
-
-    @Autowired
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-    @PostMapping(value = "/audio", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Update account detail info"
-    )
-    public FileUploadResponse uploadFileAudio(
-            @Validated @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "name", required = false) String name) throws IOException {
-
-        FileUploadRequest request = FileUploadRequest.builder()
-                .file(file).name(name).build();
-
-        FileUploadResponse response = fileService.uploadFileAudio(request);
-
-        return response;
-    }
-
-    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-            summary = "Update account detail info"
-    )
-    public FileUploadResponse uploadFileImage(
-            @Validated @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "name", required = false) String name) throws IOException {
-
-        FileUploadRequest request = FileUploadRequest.builder()
-                .file(file).name(name).build();
-
-        FileUploadResponse response = fileService.uploadFileImage(request);
-        return response;
-    }
+//    FileService fileService;
+//
+//    @Autowired
+//    public FileController(FileService fileService) {
+//        this.fileService = fileService;
+//    }
+//
+//    @PostMapping(value = "/audio", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Operation(
+//            summary = "Update account detail info"
+//    )
+//    public FileUploadResponse uploadFileAudio(
+//            @Validated @RequestParam("file") MultipartFile file,
+//            @RequestParam(value = "name", required = false) String name) throws IOException {
+//
+//        FileUploadRequest request = FileUploadRequest.builder()
+//                .file(file).name(name).build();
+//
+//        FileUploadResponse response = fileService.uploadFileAudio(request);
+//
+//        return response;
+//    }
+//
+//    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Operation(
+//            summary = "Update account detail info"
+//    )
+//    public FileUploadResponse uploadFileImage(
+//            @Validated @RequestParam("file") MultipartFile file,
+//            @RequestParam(value = "name", required = false) String name) throws IOException {
+//
+//        FileUploadRequest request = FileUploadRequest.builder()
+//                .file(file).name(name).build();
+//
+//        FileUploadResponse response = fileService.uploadFileImage(request);
+//        return response;
+//    }
 
     //InService:
 

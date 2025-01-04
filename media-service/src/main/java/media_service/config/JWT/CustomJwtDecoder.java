@@ -1,9 +1,11 @@
 package media_service.config.JWT;
 
-
 import lombok.extern.slf4j.Slf4j;
 import media_service.dto.authenticationDto.request.IntrospectRequest;
+import media_service.exception.AuthenException;
+import media_service.exception.ErrorCode;
 import media_service.service.AuthenticationService;
+import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -51,6 +53,15 @@ public class CustomJwtDecoder implements JwtDecoder {
         return nimbusJwtDecoder.decode(token);
     }
 
-    // Done, Ctrl Z to know the bug
+    //*Also will decode here
+    public Jwt extractTokenFromMessage(Message message) {
+        String jwtToken = (String) message.getMessageProperties().getHeaders().get("Authorization");
+        if (jwtToken == null) {
+            throw new AuthenException(ErrorCode.INVALID_TOKEN);
+        }
 
+        Jwt decodedJwt = this.decode(jwtToken);
+
+        return decodedJwt;
+    }
 }
