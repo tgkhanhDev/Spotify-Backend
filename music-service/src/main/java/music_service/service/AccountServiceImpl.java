@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     public CheckMailResponse checkMail(CheckEmailRequest email) {
         boolean isMailExist = accountRepository.existsByEmail(email.getEmail());
 
-        if(isMailExist) return new CheckMailResponse(true, ErrorCode.MAIL_EXISTED.getMessage());
+        if (isMailExist) return new CheckMailResponse(true, ErrorCode.MAIL_EXISTED.getMessage());
 
         return new CheckMailResponse(isMailExist, "Email này phù hợp!");
     }
@@ -56,7 +56,8 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public AccountResponse registerAccount(CreateAccountRequest createAccountRequest) {
 
-        if(accountRepository.existsByEmail(createAccountRequest.getEmail())) throw new AuthenException(ErrorCode.MAIL_EXISTED);
+        if (accountRepository.existsByEmail(createAccountRequest.getEmail()))
+            throw new AuthenException(ErrorCode.MAIL_EXISTED);
 
         Account account = accountMapper.toAccount(createAccountRequest);
         account.setSubcribe(false);
@@ -69,29 +70,24 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse updateUserInfo(UpdateUserInfoRequest request) {
-        //Check validity
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
-
-        // Get JWT token details
-       W
-            //Update user info
-            Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
-            LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            if(date.isAfter(LocalDate.now())) throw new AuthenException(ErrorCode.DATE_OF_BIRTH_INVALID);
-
-            account.setBirthday(date);
-//            account.setBirthday(request.getDateOfBirth());
-            account.setGender(request.isGender());
-            accountRepository.save(account);
-            return accountMapper.toAccountResponse(account);
-
-        } else {
-            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
-        }
-
+//        //Check validity
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+//        }
+//
+//        // Get JWT token details
+//        //Update user info
+//        Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+//        LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//        if (date.isAfter(LocalDate.now())) throw new AuthenException(ErrorCode.DATE_OF_BIRTH_INVALID);
+//
+//        account.setBirthday(date);
+////            account.setBirthday(request.getDateOfBirth());
+//        account.setGender(request.isGender());
+//        accountRepository.save(account);
+//        return accountMapper.toAccountResponse(account);
+        return null;
 
     }
 

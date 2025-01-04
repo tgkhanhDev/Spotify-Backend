@@ -1,5 +1,6 @@
 package auth_service.config;
 
+import auth_service.config.JWT.CustomJwtDecoder;
 import auth_service.dto.authenticationDto.request.AuthenticationRequest;
 import auth_service.dto.authenticationDto.response.ApiResponse;
 import auth_service.exception.AuthenException;
@@ -13,6 +14,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,9 @@ public class CustomMessageSender {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     //For Request
     public <T> T decodeAndDeserializeBytes(byte[] message, Class<T> clazz) {
@@ -73,13 +78,16 @@ public class CustomMessageSender {
         );
     }
 
-    public String extractTokenFromMessage(Message message) {
+    //*Also will decode here
+    public Jwt extractTokenFromMessage(Message message) {
         String jwtToken = (String) message.getMessageProperties().getHeaders().get("Authorization");
         if (jwtToken == null) {
             throw new AuthenException(ErrorCode.INVALID_TOKEN);
         }
 
-        return jwtToken;
+        Jwt decodedJwt = customJwtDecoder.decode(jwtToken);
+
+        return decodedJwt;
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,17 +26,11 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProducer {
     final AccountService accountService;
-    final EmailService emailService;
-    final AuthenticationService authenticationService;
-    RabbitTemplate rabbitTemplate;
     CustomMessageSender customMessageSender;
 
     @Autowired
-    public UserProducer(AccountService accountService, EmailService emailService, AuthenticationService authenticationService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender) {
+    public UserProducer(AccountService accountService, CustomMessageSender customMessageSender) {
         this.accountService = accountService;
-        this.emailService = emailService;
-        this.authenticationService = authenticationService;
-        this.rabbitTemplate = rabbitTemplate;
         this.customMessageSender = customMessageSender;
     }
 
@@ -50,7 +45,7 @@ public class UserProducer {
         }
 
         String key = message.getMessageProperties().getReceivedRoutingKey();
-        String jwtToken = null;
+        Jwt jwtToken = null;
 
         try {
             switch (key) {

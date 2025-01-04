@@ -24,7 +24,7 @@ public enum ErrorCode {
     INVALID_PASSWORD(1005, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User does not exist", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1007, "Unauthenticated user", HttpStatus.UNAUTHORIZED),
-    CLAIM_NOT_FOUND(1008, "Clanàyims not found", HttpStatus.BAD_REQUEST),
+    CLAIM_NOT_FOUND(1008, "Claim not found", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED(1008, "You do not have permission", HttpStatus.FORBIDDEN),
     USER_DOES_NOT_HAVE_PERMISSION(1008, "This user does not have permission", HttpStatus.FORBIDDEN),
     MAIL_EXISTED(1009, "Email này đã được Sử Dụng Bởi Starboy98", HttpStatus.BAD_REQUEST),

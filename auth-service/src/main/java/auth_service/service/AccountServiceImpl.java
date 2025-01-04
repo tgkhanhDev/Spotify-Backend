@@ -67,10 +67,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateUserInfo(UpdateUserInfoRequest request, String jwtToken) {
-        //Decode JWT
-        Jwt jwt = customJwtDecoder.decode(jwtToken); //already check validity
-        UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+    public AccountResponse updateUserInfo(UpdateUserInfoRequest request, Jwt jwtToken) {
+        UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
 
         //Update user info
         Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
@@ -85,10 +83,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateAccountInfo(UpdateAccountRequest request, String jwtToken) {
-        //Decode JWT
-        Jwt jwt = customJwtDecoder.decode(jwtToken); //already check validity
-        UUID userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+    public AccountResponse updateAccountInfo(UpdateAccountRequest request, Jwt jwtToken) {
+
+        UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
 
         //Update user info
         Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
