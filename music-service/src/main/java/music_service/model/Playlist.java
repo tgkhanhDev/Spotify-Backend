@@ -40,7 +40,7 @@ public class Playlist {
     @JoinColumn(name = "creatorId")
     Account account;
 
-    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "playlist", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     List<PlaylistMusic> playlistMusicSet;
 
 }

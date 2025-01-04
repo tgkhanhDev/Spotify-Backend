@@ -1,22 +1,17 @@
-package auth_service.producer;
+package auth_service.consumer;
 
 import auth_service.config.CustomMessageSender;
 import auth_service.dto.accountDto.request.UpdateAccountRequest;
 import auth_service.dto.accountDto.request.UpdateUserInfoRequest;
-import auth_service.dto.authenticationDto.request.AuthenticationRequest;
-import auth_service.dto.authenticationDto.request.IntrospectRequest;
 import auth_service.dto.authenticationDto.response.AccountResponse;
 import auth_service.exception.AuthenException;
 import auth_service.exception.ErrorCode;
 import auth_service.service.AccountService;
-import auth_service.service.AuthenticationService;
-import auth_service.service.EmailService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -24,12 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserProducer {
+public class UserConsumer {
     final AccountService accountService;
     CustomMessageSender customMessageSender;
 
     @Autowired
-    public UserProducer(AccountService accountService, CustomMessageSender customMessageSender) {
+    public UserConsumer(AccountService accountService, CustomMessageSender customMessageSender) {
         this.accountService = accountService;
         this.customMessageSender = customMessageSender;
     }

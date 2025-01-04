@@ -1,4 +1,4 @@
-package auth_service.producer;
+package auth_service.consumer;
 
 import auth_service.config.CustomMessageSender;
 import auth_service.dto.accountDto.response.CheckMailResponse;
@@ -6,6 +6,7 @@ import auth_service.dto.authenticationDto.request.*;
 import auth_service.dto.authenticationDto.response.AccountResponse;
 import auth_service.dto.authenticationDto.response.AuthenticationResponse;
 import auth_service.dto.authenticationDto.response.EmailAuthenResponse;
+import auth_service.dto.authenticationDto.response.IntrospectResponse;
 import auth_service.exception.AuthenException;
 import auth_service.exception.ErrorCode;
 import auth_service.service.AccountService;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthProducer {
+public class AuthConsumer {
     final AuthenticationService authenticationService;
     final AccountService accountService;
     final EmailService emailService;
@@ -31,7 +32,7 @@ public class AuthProducer {
     CustomMessageSender customMessageSender;
 
     @Autowired
-    public AuthProducer(AuthenticationService authenticationService, AccountService accountService, EmailService emailService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender) {
+    public AuthConsumer(AuthenticationService authenticationService, AccountService accountService, EmailService emailService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender) {
         this.authenticationService = authenticationService;
         this.accountService = accountService;
         this.emailService = emailService;
@@ -110,6 +111,11 @@ public class AuthProducer {
                     EmailAuthenResponse emailAuthenResponseForgetConfirm = emailService.verifyCode(checkEmailRequestForgetConfirm.getEmail(), checkEmailRequestForgetConfirm.getCode());
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, emailAuthenResponseForgetConfirm);
 
+                    break;
+                case "auth.introspect":
+                    IntrospectRequest introspectRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), IntrospectRequest.class);
+                    IntrospectResponse introspectResponse = authenticationService.introspect(introspectRequest);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, introspectResponse);
                     break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);

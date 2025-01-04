@@ -65,7 +65,7 @@ public class PlaylistController {
     @Operation(summary = "*Delete playlist")
     public PlaylistResponse deletePlaylist(@RequestParam UUID playlistId) {
         String routingKey = "playlist.delete-playlist";
-        return customMessageSender.customEventSender(exchange, routingKey, false, playlistId, PlaylistResponse.class);
+        return customMessageSender.customEventSender(exchange, routingKey, true, playlistId, PlaylistResponse.class);
 //        return playlistService.deletePlaylistById(playlistId);
     }
 

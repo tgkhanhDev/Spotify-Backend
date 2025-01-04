@@ -1,9 +1,10 @@
-package music_service.producer;
+package music_service.consumer;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import music_service.config.CustomMessageSender;
+import music_service.config.JWT.CustomJwtDecoder;
 import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
 import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
 import music_service.dto.playlistDto.response.PlaylistResponse;
@@ -21,19 +22,21 @@ import java.util.UUID;
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlaylistProducer {
+public class PlaylistConsumer {
     final PlaylistService playlistService;
     RabbitTemplate rabbitTemplate;
     CustomMessageSender customMessageSender;
+    CustomJwtDecoder customJwtDecoder;
 
-    public PlaylistProducer(PlaylistService playlistService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender) {
+    public PlaylistConsumer(PlaylistService playlistService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender, CustomJwtDecoder customJwtDecoder) {
         this.playlistService = playlistService;
         this.rabbitTemplate = rabbitTemplate;
         this.customMessageSender = customMessageSender;
+        this.customJwtDecoder = customJwtDecoder;
     }
 
 
-    @RabbitListener(queues = "${rabbitmq.product.queue.name}")
+    @RabbitListener(queues = "${rabbitmq.playlist.queue.name}")
     public void playlistQueueListener(Object payload, Message message) throws Exception {
 
         String correlationId = message.getMessageProperties().getCorrelationId();
@@ -49,7 +52,7 @@ public class PlaylistProducer {
         try {
             switch (key) {
                 case "playlist.get-all-playlist-by-user":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     break;
                 case "playlist.get-playlist-by-id":
                     UUID playlistId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UUID.class);
@@ -57,30 +60,30 @@ public class PlaylistProducer {
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, playlistResponse);
                     break;
                 case "playlist.create-playlist":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     PlaylistResponse createPlaylistResponse = playlistService.createPlaylist(jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, createPlaylistResponse);
                     break;
                 case "playlist.delete-playlist":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     UUID delPlaylistId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UUID.class);
                     PlaylistResponse delPlaylistResponse = playlistService.deletePlaylistById(delPlaylistId, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, delPlaylistResponse);
                     break;
                 case "playlist.update-playlist":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     UpdatePlaylistRequest updatePlaylistRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UpdatePlaylistRequest.class);
                     PlaylistResponse updatePlaylistResponse = playlistService.updatePlaylistInfo(updatePlaylistRequest, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, updatePlaylistResponse);
                     break;
                 case "playlist.add-music-to-playlist":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     UpdatePlaylistMusicRequest updatePlaylistMusicRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UpdatePlaylistMusicRequest.class);
                     PlaylistResponse updatePlaylistMusicResponse = playlistService.addPlaylistMusic(updatePlaylistMusicRequest, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, updatePlaylistMusicResponse);
                     break;
                 case "playlist.remove-music-from-playlist":
-                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     UpdatePlaylistMusicRequest removePlaylistMusicRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UpdatePlaylistMusicRequest.class);
                     PlaylistResponse removePlaylistMusicResponse = playlistService.removePlaylistMusic(removePlaylistMusicRequest, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, removePlaylistMusicResponse);

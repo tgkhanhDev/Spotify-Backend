@@ -102,7 +102,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional
     public PlaylistResponse deletePlaylistById(UUID playlistId, Jwt jwtToken) {
         //Decode JWT
-        UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        String userIdClaims = jwtToken.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
 
         //Check permission
         Playlist playlistDeleted = playlistRepository.findById(playlistId).orElseThrow(() -> new MusicException(ErrorCode.PLAYLIST_NOT_FOUND));
@@ -175,7 +175,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     @Transactional
     public PlaylistResponse removePlaylistMusic(UpdatePlaylistMusicRequest request, Jwt jwtToken) {
-        UUID userIdClaims = jwtToken.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
+        String userIdClaims = jwtToken.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
 
         Playlist playlistUpdated = playlistRepository.findById(request.getPlaylistId()).orElseThrow(() -> new MusicException(ErrorCode.PLAYLIST_NOT_FOUND));
 

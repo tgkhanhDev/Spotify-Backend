@@ -55,7 +55,7 @@ public class CustomJwtDecoder implements JwtDecoder {
         return nimbusJwtDecoder.decode(token);
     }
 
-    // Done, Ctrl Z to know the bug
+    //? This function only use for get Token from HTTP Request
     public String extractJwtToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

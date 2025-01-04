@@ -32,10 +32,14 @@ public class RabbitMQConfig {
     private String userRoutingKey;
 
     //TODO: Product Service
-    @Value("${rabbitmq.product.queue.name}")
-    private String productQueue;
-    @Value("${rabbitmq.product.routing.key}")
-    private String productRoutingKey;
+    @Value("${rabbitmq.playlist.queue.name}")
+    private String playlistQueue;
+    @Value("${rabbitmq.playlist.routing.key}")
+    private String playlistRoutingKey;
+    @Value("${rabbitmq.music.queue.name}")
+    private String musicQueue;
+    @Value("${rabbitmq.music.routing.key}")
+    private String musicRoutingKey;
 
     //TODO: MediaIO Service
     @Value("${rabbitmq.mediaIO.queue.name}")
@@ -62,8 +66,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue productQueue() {
-        return QueueBuilder.durable(productQueue)
+    public Queue playlistQueue() {
+        return QueueBuilder.durable(playlistQueue)
+                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
+                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
+                .build();
+    }
+
+    @Bean
+    public Queue musicQueue() {
+        return QueueBuilder.durable(musicQueue)
                 .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
                 .build();
@@ -109,10 +121,17 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding productBinding() {
-        return BindingBuilder.bind(productQueue())
+    public Binding playlistBinding() {
+        return BindingBuilder.bind(playlistQueue())
                 .to(exchange())
-                .with(productRoutingKey);
+                .with(playlistRoutingKey);
+    }
+
+    @Bean
+    public Binding musicBinding() {
+        return BindingBuilder.bind(musicQueue())
+                .to(exchange())
+                .with(musicRoutingKey);
     }
 
     @Bean
