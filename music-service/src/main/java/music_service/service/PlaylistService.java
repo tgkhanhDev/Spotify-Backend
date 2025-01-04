@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PlaylistService {
-    List<PlaylistOverallResponse> getAllUserPlaylist();
+    List<PlaylistOverallResponse> getAllUserPlaylist(Jwt jwtToken);
     PlaylistResponse getPlaylistById(UUID playlistId);
     PlaylistResponse createPlaylist(Jwt jwtToken);
 

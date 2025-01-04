@@ -55,27 +55,5 @@ public class CustomJwtDecoder implements JwtDecoder {
         return nimbusJwtDecoder.decode(token);
     }
 
-    //? This function only use for get Token from HTTP Request
-    public String extractJwtToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Check if the authentication is valid
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
-
-        // Extract the Jwt object from the credentials (or principal)
-        Object credentials = authentication.getCredentials();
-
-        // Ensure the credentials are of type Jwt
-        if (credentials instanceof Jwt) {
-            Jwt jwt = (Jwt) credentials;
-            return jwt.getTokenValue();  // Get the raw JWT token as a string
-        }
-
-        // If the credentials aren't of type Jwt, throw an exception
-        throw new AuthenException(ErrorCode.INVALID_TOKEN);
-    }
-
 
 }

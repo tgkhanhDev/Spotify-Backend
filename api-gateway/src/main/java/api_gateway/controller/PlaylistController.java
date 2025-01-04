@@ -37,11 +37,7 @@ public class PlaylistController {
     @Cacheable(cacheNames = "playlist", key = "#root.methodName")
     public List<PlaylistOverallResponse> getAllPlaylistByUser() {
         String routingKey = "playlist.get-all-playlist-by-user";
-//        return customMessageSender.customEventSender(exchange, routingKey, true, null, List.class);
-//        List<ArtistCollaboration> artistCollaboration = artistRepository.findAll();
-//        return artistCollaborationMapper.toArtistCollaborationResponseList(artistCollaboration);
-        return null;
-//        return playlistService.getAllUserPlaylist();
+        return customMessageSender.customEventSender(exchange, routingKey, true, null, List.class);
     }
 
     @GetMapping("/{playlistId}")

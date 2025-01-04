@@ -54,24 +54,13 @@ public class PlaylistServiceImpl implements PlaylistService {
 
 
     @Override
-    public List<PlaylistOverallResponse> getAllUserPlaylist() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public List<PlaylistOverallResponse> getAllUserPlaylist(Jwt jwtToken) {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
+        UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
 
-        // Get JWT token details
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-//            log.info("JWT Token: {}", jwt.getClaim("sub").toString() );
-            String userId = jwt.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
-            List<Playlist> playlists = playlistRepository.findAllByAccount_Id(UUID.fromString(userId), Sort.by(Sort.Direction.DESC, "createdTime"));
+        List<Playlist> playlists = playlistRepository.findAllByAccount_Id(userIdClaims, Sort.by(Sort.Direction.DESC, "createdTime"));
 
-            return playlistMapper.toPlaylistOverallResponseList(playlists);
-        } else {
-            throw new AuthenException(ErrorCode.CLAIM_NOT_FOUND);
-        }
+        return playlistMapper.toPlaylistOverallResponseList(playlists);
     }
 
     @Override

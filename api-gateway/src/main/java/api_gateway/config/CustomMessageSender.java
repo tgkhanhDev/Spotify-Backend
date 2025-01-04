@@ -16,6 +16,9 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -108,7 +111,7 @@ public class CustomMessageSender {
                     message.getMessageProperties().setCorrelationId(correlationId);
                     message.getMessageProperties().setReplyTo(replyToQueue); // Dynamic reply queue
                     if (isRequireToken) {
-                        String jwtToken = customJwtDecoder.extractJwtToken();
+                        String jwtToken = getTokenFromContext();
                         message.getMessageProperties().setHeader("Authorization", jwtToken);
                     }
                     return message;
@@ -121,6 +124,28 @@ public class CustomMessageSender {
             throw new AuthenException(ErrorCode.SERVER_NOT_RESPONSE);
         }
         return decodeAndDeserializeBytesResponse(responseMessage, responseClass);
+    }
+
+    //? This function only use for get Token from HTTP Request
+    public String getTokenFromContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if the authentication is valid
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Extract the Jwt object from the credentials (or principal)
+        Object credentials = authentication.getCredentials();
+
+        // Ensure the credentials are of type Jwt
+        if (credentials instanceof Jwt) {
+            Jwt jwt = (Jwt) credentials;
+            return jwt.getTokenValue();  // Get the raw JWT token as a string
+        }
+
+        // If the credentials aren't of type Jwt, throw an exception
+        throw new AuthenException(ErrorCode.INVALID_TOKEN);
     }
 
 }
