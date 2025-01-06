@@ -1,15 +1,15 @@
 package api_gateway.config.JWT;
 
 
+import api_gateway.dto.authenticationDto.response.IntrospectResponse;
 import api_gateway.exception.AuthenException;
 import api_gateway.exception.ErrorCode;
-import api_gateway.service.AuthenticationService;
+import api_gateway.producer.AuthProducer;
 import lombok.extern.slf4j.Slf4j;
 import api_gateway.dto.authenticationDto.request.IntrospectRequest;
+import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -28,18 +28,19 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Value("${SIGNER_KEY}")
     private String signerKey;
 
-    @Autowired
-    private AuthenticationService authenticationService;
-
     private NimbusJwtDecoder nimbusJwtDecoder = null;
+    private AuthProducer authProducer;
+
+    @Autowired
+    public CustomJwtDecoder(AuthProducer authProducer) {
+        this.authProducer = authProducer;
+    }
 
     @Override
     public Jwt decode(String token) throws JwtException {
 
         try {
-            var response = authenticationService.introspect(
-                    IntrospectRequest.builder().token(token).build());
-
+            IntrospectResponse response = authProducer.introspectToken(IntrospectRequest.builder().token(token).build());
             if (!response.isValid()) throw new JwtException("Token invalid");
         } catch (JwtException e) {
             throw new JwtException(e.getMessage());
@@ -55,5 +56,17 @@ public class CustomJwtDecoder implements JwtDecoder {
         return nimbusJwtDecoder.decode(token);
     }
 
+
+    //*Also will decode here
+    public Jwt extractTokenFromMessage(Message message) {
+        String jwtToken = (String) message.getMessageProperties().getHeaders().get("Authorization");
+        if (jwtToken == null) {
+            throw new AuthenException(ErrorCode.INVALID_TOKEN);
+        }
+
+        Jwt decodedJwt = this.decode(jwtToken);
+
+        return decodedJwt;
+    }
 
 }

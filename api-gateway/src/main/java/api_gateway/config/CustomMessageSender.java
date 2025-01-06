@@ -1,6 +1,5 @@
 package api_gateway.config;
 
-import api_gateway.config.JWT.CustomJwtDecoder;
 import api_gateway.config.customSerializer.FileUploadRequestSerializer;
 import api_gateway.dto.fileDto.request.FileUploadRequest;
 import api_gateway.exception.AuthenException;
@@ -8,7 +7,6 @@ import api_gateway.exception.ErrorCode;
 import api_gateway.exception.ErrorCodeResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +24,12 @@ import java.util.UUID;
 @Slf4j
 public class CustomMessageSender {
 
-    @Autowired
     private RabbitTemplate rabbitTemplate;
+
     @Autowired
-    private CustomJwtDecoder customJwtDecoder;
+    public CustomMessageSender(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     public <T> T decodeAndDeserializeBytes(byte[] message, Class<T> clazz) {
         try {
@@ -81,7 +81,6 @@ public class CustomMessageSender {
             throw new AuthenException(ErrorCode.CAN_NOT_DESERIALIZE);
         }
     }
-
 
     //RequestSender
     public <P, R> R customEventSender(String exchange, String routingKey, boolean isRequireToken, P payload, Class<R> responseClass) {

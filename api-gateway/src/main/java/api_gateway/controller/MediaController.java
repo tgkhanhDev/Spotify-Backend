@@ -58,10 +58,6 @@ public class MediaController {
                 .file(file).name(name).build();
         String routingKey = "media.upload-file-image";
         return customMessageSender.customEventSender(exchange, routingKey, true, request, FileUploadResponse.class);
-
-//        FileUploadResponse response = fileService.uploadFileImage(request);
-//        return response;
-//        return null;
     }
 
 }
