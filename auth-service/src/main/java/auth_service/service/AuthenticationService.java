@@ -143,6 +143,7 @@ public class AuthenticationService {
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .claim("userId", user.getId())
+                .claim("isSubscribe", user.isSubcribe())
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

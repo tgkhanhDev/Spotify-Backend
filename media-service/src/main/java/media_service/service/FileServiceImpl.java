@@ -54,20 +54,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileUploadResponse uploadFileAudio(FileUploadRequest request, Jwt jwtToken) {
 
-        //Extract token from request
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
+        String userIdClaims = jwtToken.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
 
-        UUID userIdClaims = null;
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
-        }
 
         //Define file name for save
-        String fileName = userIdClaims.toString()+"_"+LocalDateTime.now();
+        String fileName = userIdClaims+"_"+LocalDateTime.now();
 
         // Define upload directory
         String filePath = rootFilePath + musicFilePath;
@@ -122,27 +113,17 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileUploadResponse uploadFileImage(FileUploadRequest request, Jwt jwtToken) {
 
-        //Extract token from request
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenException(ErrorCode.UNAUTHORIZED);
-        }
-
-        UUID userIdClaims = null;
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            userIdClaims = UUID.fromString(jwt.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
-        }
+        String userIdClaims = jwtToken.getClaim("userId"); // Replace "sub" with the appropriate claim key for user ID
 
         //Define file name for save
-        String fileName = userIdClaims.toString()+"_"+LocalDateTime.now();
+        String fileName = userIdClaims +"_"+LocalDateTime.now();
 
 
         // Define upload directory
         String filePath = rootFilePath + imageFilePath;
         String imageName = request.getFile().getOriginalFilename();
 
-
+        System.out.println("1: "+request.toString());
         //check origin
         try {
             BufferedImage image = ImageIO.read(request.getFile().getInputStream());
@@ -172,6 +153,12 @@ public class FileServiceImpl implements FileService {
             String entirePath = filePath + fileName;
             System.out.println("FilePathImage: " + entirePath);
             request.getFile().transferTo(new File(entirePath));
+
+            System.out.println("fileImage: " + FileUploadResponse.builder()
+                    .url(imageDeployPath + fileName)
+                    .fileName(fileName)
+                    .name(imageName)
+                    .build().toString());
 
             return FileUploadResponse.builder()
                     .url(imageDeployPath + fileName)

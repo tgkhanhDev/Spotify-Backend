@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileUploadResponse{
-        String id;
         String name;
+        String fileName;
         String url;
         Long duration;
 }

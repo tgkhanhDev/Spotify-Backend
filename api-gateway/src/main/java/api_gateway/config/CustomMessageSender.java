@@ -1,26 +1,23 @@
 package api_gateway.config;
 
 import api_gateway.config.JWT.CustomJwtDecoder;
-import api_gateway.dto.accountDto.response.CheckMailResponse;
-import api_gateway.dto.authenticationDto.response.ApiResponse;
+import api_gateway.config.customSerializer.FileUploadRequestSerializer;
+import api_gateway.dto.fileDto.request.FileUploadRequest;
 import api_gateway.exception.AuthenException;
 import api_gateway.exception.ErrorCode;
 import api_gateway.exception.ErrorCodeResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
@@ -95,7 +92,15 @@ public class CustomMessageSender {
         byte[] payloadSent = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            payloadSent = objectMapper.writeValueAsBytes(payload);
+            if (payload instanceof FileUploadRequest) {
+                // Register custom serializer
+                SimpleModule module = new SimpleModule();
+                module.addSerializer(FileUploadRequest.class, new FileUploadRequestSerializer());
+                objectMapper.registerModule(module);
+                payloadSent = objectMapper.writeValueAsBytes(payload);
+            } else {
+                payloadSent = objectMapper.writeValueAsBytes(payload);
+            }
         } catch (Exception e) {
             log.error("Error: {}", e.getMessage());
             throw new AuthenException(ErrorCode.UNCATEGORIZED_EXCEPTION);
