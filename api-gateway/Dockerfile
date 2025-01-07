@@ -2,10 +2,12 @@
 FROM openjdk:17-jdk-slim
 
 # Working directory inside the container
-WORKDIR /root/music-service
+WORKDIR /root/api-gateway
 
 # Copy file builded by Maven
-COPY target/*.jar authen-services-3.3.5.jar
+COPY target/*.jar api-gateway.jar
+
+EXPOSE 8005
 
 # Run the JAR file
-ENTRYPOINT ["java", "-jar", "authen-services-3.3.5.jar"]
+ENTRYPOINT ["java", "-jar", "api-gateway.jar"]

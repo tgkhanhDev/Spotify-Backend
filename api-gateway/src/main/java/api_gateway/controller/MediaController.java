@@ -42,8 +42,6 @@ public class MediaController {
         String routingKey = "media.upload-file-audio";
         return customMessageSender.customEventSender(exchange, routingKey, true, request, FileUploadResponse.class);
 
-//        FileUploadResponse response = fileService.uploadFileAudio(request);
-//        return response;
     }
 
     @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -6,8 +6,8 @@ services:
     build:
       context: . # Path to your Dockerfile
       dockerfile: Dockerfile # Name of your Dockerfile
-    ports:
-      - "8080:8080" # Map container's port to host's port
+#    ports:
+#      - "8080:8080" # Map container's port to host's port
     restart: unless-stopped # Automatically restart the container unless stopped manually
     env_file:
       - .env

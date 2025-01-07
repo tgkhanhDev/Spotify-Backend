@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+
+  api-gateway:
+    image: tgkhanhdev/api-gateway:test-v1
+    build:
+      context: api-gateway # Path to your Dockerfile
+      dockerfile: api-gateway/Dockerfile # Name of your Dockerfile
+    restart: unless-stopped
+
+  media-service:
+    image: tgkhanhdev/media-upload-service:test-v1
+    build:
+      context: media-service # Path to your Dockerfile
+      dockerfile: media-service/Dockerfile # Name of your Dockerfile
+    volumes:
+      -  ${MUSICS_PATH}:/root/storage/musics/
+      -  ${IMAGES_PATH}:/root/storage/images/
+#    ports:
+#      - "8080:8080" # Map container's port to host's port
+    restart: unless-stopped # Automatically restart the container unless stopped manually
+    env_file:
+      - media-service/.env
+
+  auth-service:
+    image: tgkhanhdev/auth-service:test-v1
+    build:
+      context: auth-service # Path to your Dockerfile
+      dockerfile: auth-service/Dockerfile # Name of your Dockerfile
+    restart: unless-stopped
+
+  music-service:
+    image: tgkhanhdev/music-service:test-v1
+    build:
+      context: music-service # Path to your Dockerfile
+      dockerfile: music-service/Dockerfile # Name of your Dockerfile
+    restart: unless-stopped

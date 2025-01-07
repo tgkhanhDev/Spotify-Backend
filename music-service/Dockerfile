@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /root/music-service
 
 # Copy file builded by Maven
-COPY target/*.jar authen-services-3.3.5.jar
+COPY target/*.jar music-service.jar
 
 # Run the JAR file
-ENTRYPOINT ["java", "-jar", "authen-services-3.3.5.jar"]
+ENTRYPOINT ["java", "-jar", "music-service.jar"]
