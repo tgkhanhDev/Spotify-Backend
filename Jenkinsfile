@@ -22,6 +22,9 @@ pipeline {
         }
 
         stage('Step 1: Build services with Maven') {
+            steps {
+                echo: 'Build services with Maven'
+            }
         }
 
         stage('Step 1.1: Navigate and Build music-service') {
