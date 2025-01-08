@@ -21,22 +21,46 @@ pipeline {
             }
         }
 
-        stage('Step 1: Navigate to music-service') {
+        stage('Step 1: Navigate and Build music-service') {
             steps {
                 dir('music-service') {
                     echo 'Navigated to music-service directory'
-                }
-            }
-        }
-        stage('Step 2: Build source with Maven') {
-            steps {
-                dir('music-service') {
                     sh 'mvn clean package'
                     echo 'Source built successfully with Maven'
                 }
             }
         }
-        
+
+
+        stage('Step 1.2: Navigate to auth-service') {
+            steps {
+                dir('auth-service') {
+                    echo 'Navigated to auth-service directory'
+                    sh 'mvn clean package'
+                    echo 'Source built successfully with Maven'
+                }
+            }
+        }
+
+        stage('Step 1.3: Navigate to media-service') {
+            steps {
+                dir('media-service') {
+                    echo 'Navigated to media-service directory'
+                        sh 'mvn clean package'
+                        echo 'Source built successfully with Maven'
+                }
+            }
+        }
+
+        stage('Step 1.3: Navigate to api-gateway') {
+            steps {
+                dir('api-gateway') {
+                    echo 'Navigated to api-gateway directory'
+                    sh 'mvn clean package'
+                    echo 'Source built successfully with Maven'
+                }
+            }
+        }
         
         stage('Step 3: Remove old container') {
             steps {

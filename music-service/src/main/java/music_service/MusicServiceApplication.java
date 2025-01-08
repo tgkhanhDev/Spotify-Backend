@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "AuthenApis", version = "1.0", description = "AuthenApis"))
+@OpenAPIDefinition(info = @Info(title = "MusicServices", version = "1.0", description = "MusicServices"))
 public class MusicServiceApplication {
 	public static void main(String[] args) {
 

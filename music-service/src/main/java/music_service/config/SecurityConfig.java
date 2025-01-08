@@ -47,28 +47,6 @@ public class SecurityConfig {
     private CustomJwtDecoder customJwtDecoder;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request
-                .requestMatchers(AUTH_WHITELIST).permitAll()
-                .requestMatchers(PUBLIC_ENDPOINTS_POST).permitAll()
-                .requestMatchers(PUBLIC_ENDPOINTS_GET).permitAll()
-                //                        .requestMatchers(HttpMethod.GET, "/account").hasAuthority("ROLE_ADMIN")
-                .anyRequest()
-                .authenticated());
-
-        // OAuth2 //decoder: decoder is a interface, and use for decode a token
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
-                        .decoder(customJwtDecoder)
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
-
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-
-
-        return httpSecurity.build();
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }

@@ -29,7 +29,7 @@ public class Music {
     @Column(name = "thumbnail", nullable = false)
     String thumbnail;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "musicId")
     List<ArtistCollaboration> artistCollaboration;
 }
