@@ -21,7 +21,10 @@ pipeline {
             }
         }
 
-        stage('Step 1: Navigate and Build music-service') {
+        stage('Step 1: Build services with Maven') {
+        }
+
+        stage('Step 1.1: Navigate and Build music-service') {
             steps {
                 dir('music-service') {
                     echo 'Navigated to music-service directory'
@@ -52,7 +55,7 @@ pipeline {
             }
         }
 
-        stage('Step 1.3: Navigate to api-gateway') {
+        stage('Step 1.4: Navigate to api-gateway') {
             steps {
                 dir('api-gateway') {
                     echo 'Navigated to api-gateway directory'
@@ -62,31 +65,21 @@ pipeline {
             }
         }
         
-        stage('Step 3: Remove old container') {
+        stage('Step 2: Remove old container') {
             steps {
-                dir('music-service') {
-                    sh 'docker rm -f music-service'
-                    echo 'Remove container successfully'
-                }
+                sh 'docker compose down'
+                echo 'Remove container successfully'
             }
         }
 
-        stage('Step 4: Build Docker image') {
+        stage('Step 3: Run Docker Composes') {
             steps {
-                dir('music-service') {
-                    sh 'docker build -t music-service:latest .'
-                    echo 'Docker image built successfully'
-                }
-            }
-        }
-        stage('Step 5: Run Docker image') {
-            steps {
-                sh 'docker run -d -p 8005:8080 --name music-service music-service:latest'
+                sh 'docker compose up -d'
                 echo 'Docker image running on port 8005'
             }
         }
 
-        stage('Step 6: Remove Dangling Images') {
+        stage('Step 4: Remove Dangling Images') {
             steps {
                 sh 'docker images -f "dangling=true" -q | xargs docker rmi'
                 echo 'Dangling images removed successfully'
