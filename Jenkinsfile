@@ -64,14 +64,14 @@ pipeline {
         
         stage('Step 2: Remove old container') {
             steps {
-                sh 'docker compose down'
+                sh 'docker-compose down'
                 echo 'Remove container successfully'
             }
         }
 
         stage('Step 3: Run Docker Composes') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker-compose up -d'
                 echo 'Docker image running on port 8005'
             }
         }
