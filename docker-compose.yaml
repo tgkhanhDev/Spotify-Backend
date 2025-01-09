@@ -15,8 +15,8 @@ services:
       context: ./media-service
       dockerfile: Dockerfile
     volumes:
-      - /mnt/media/spotify_app/musics/:/root/storage/musics/
-      - /mnt/media/spotify_app/images/:/root/storage/images/
+      - /root/storage/spotify_app/musics/:/root/storage/musics/
+      - /root/storage/spotify_app/images/:/root/storage/images/
     restart: unless-stopped
 
   auth-service:
