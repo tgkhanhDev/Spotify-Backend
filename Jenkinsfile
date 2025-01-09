@@ -6,6 +6,14 @@ pipeline {
     }
 
     stages {
+        stage('Check PWD') {
+                steps {
+                    script {
+                        // Print the current working directory
+                        echo "Current working directory: ${pwd()}"
+                }
+            }
+        }
 
         stage('Set Build Name') {
             steps {
