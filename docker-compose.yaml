@@ -19,7 +19,7 @@ services:
       - ${IMAGES_PATH}:/root/storage/images/
     restart: unless-stopped
     env_file:
-      - ./media-service/.env
+      - .env
 
   auth-service:
 #    image: tgkhanhdev/auth-service:test-v1
