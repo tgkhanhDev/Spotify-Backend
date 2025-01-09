@@ -15,11 +15,9 @@ services:
       context: ./media-service
       dockerfile: Dockerfile
     volumes:
-      - ${MUSICS_PATH}:/root/storage/musics/
-      - ${IMAGES_PATH}:/root/storage/images/
+      - /mnt/media/spotify_app/musics/:/root/storage/musics/
+      - /mnt/media/spotify_app/images/:/root/storage/images/
     restart: unless-stopped
-    env_file:
-      - ./media-service/.env
 
   auth-service:
 #    image: tgkhanhdev/auth-service:test-v1
