@@ -13,7 +13,7 @@ pipeline {
                         echo "Current working directory: ${pwd()}"
                 }
             }
-        }
+       https://image-media.trangiangkhanh.site/db0d8fc2-a53f-4fec-8c7f-c901cecd1b4b_2025-01-09T07:51:04.273111110.png }
 
         stage('Set Build Name') {
             steps {
