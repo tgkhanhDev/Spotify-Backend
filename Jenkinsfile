@@ -79,7 +79,7 @@ pipeline {
         stage('Step 4: Remove Dangling Images') {
             steps {
                 sh 'docker images -f "dangling=true" -q | xargs docker rmi'
-                echo 'Dangling images removed successfully'
+                echo 'Dangling images removed successfully!'
             }
         }
     }
