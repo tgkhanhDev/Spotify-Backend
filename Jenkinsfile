@@ -86,8 +86,18 @@ pipeline {
 
         stage('Step 4: Remove Dangling Images') {
             steps {
-                sh 'docker images -f "dangling=true" -q | xargs docker rmi'
-                echo 'Dangling images removed successfully!'
+                script {
+                    // Get list of dangling image IDs
+                    def danglingImages = sh(script: 'docker images -f "dangling=true" -q', returnStdout: true).trim()
+
+                    // Check if there are any dangling images
+                    if (danglingImages) {
+                        sh "echo '${danglingImages}' | xargs docker rmi"
+                        echo 'Dangling images removed successfully!'
+                    } else {
+                        echo 'No dangling images to remove.'
+                    }
+                }
             }
         }
     }
