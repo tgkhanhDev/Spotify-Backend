@@ -1,5 +1,5 @@
 # Runtime
-FROM openjdk:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Working directory inside the container
 WORKDIR /root/auth-service
