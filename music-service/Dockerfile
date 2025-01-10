@@ -1,5 +1,5 @@
 # Runtime
-FROM openjdk:17-jre-slim
+FROM openjdk:17-jre-alpine
 
 # Working directory inside the container
 WORKDIR /root/music-service
