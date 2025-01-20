@@ -62,4 +62,13 @@ public class AccountController {
         return customMessageSender.customEventSender(exchange, routingKey, true, request, AccountResponse.class);
     }
 
+    @GetMapping("")
+    @Operation(
+            summary = "*Get user info"
+    )
+    public AccountResponse getUserInfo() {
+        String routingKey = "user.get-user-info";
+        return customMessageSender.customEventSender(exchange, routingKey, true, "", AccountResponse.class);
+    }
+
 }

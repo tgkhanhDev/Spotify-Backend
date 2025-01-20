@@ -42,6 +42,7 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS_GET = {
 //            "/playlist",
 //            "/music/get-all"
+            "/artist/get-all"
     };
 
     @Autowired

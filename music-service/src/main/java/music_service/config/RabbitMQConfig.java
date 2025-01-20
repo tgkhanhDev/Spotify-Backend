@@ -20,6 +20,11 @@ public class RabbitMQConfig {
     private String musicQueue;
     @Value("${rabbitmq.music.routing.key}")
     private String musicRoutingKey;
+    //TODO: Artists Service
+    @Value("${rabbitmq.artist.queue.name}")
+    private String artistQueue;
+    @Value("${rabbitmq.artist.routing.key}")
+    private String artistRoutingKey;
 
     @Value("${rabbitmq.error.queue.name}")
     private String deadQueue;
@@ -54,6 +59,14 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue artistQueue() {
+        return QueueBuilder.durable(artistQueue)
+                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
+                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
+                .build();
+    }
+
+    @Bean
     public Queue deadLetterQueue() {
         return new Queue(deadQueue, true);
     }
@@ -82,6 +95,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(musicQueue())
                 .to(exchange())
                 .with(musicRoutingKey);
+    }
+
+    @Bean
+    public Binding artistBinding() {
+        return BindingBuilder.bind(artistQueue())
+                .to(exchange())
+                .with(artistRoutingKey);
     }
 
     @Bean

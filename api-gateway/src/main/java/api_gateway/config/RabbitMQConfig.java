@@ -47,6 +47,11 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.mediaIO.routing.key}")
     private String mediaIORoutingKey;
 
+    //TODO: Artists Service
+    @Value("${rabbitmq.artist.queue.name}")
+    private String artistQueue;
+    @Value("${rabbitmq.artist.routing.key}")
+    private String artistRoutingKey;
 
     //!spring bean for rabbitmq queue
     @Bean
@@ -84,6 +89,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue mediaIOQueue() {
         return QueueBuilder.durable(mediaIOQueue)
+                .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
+                .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
+                .build();
+    }
+
+    @Bean
+    public Queue artistQueue() {
+        return QueueBuilder.durable(artistQueue)
                 .withArgument("x-dead-letter-exchange", dlqExchange) // Dead Letter Exchange
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey) // Dead Letter Routing Key
                 .build();
@@ -139,6 +152,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(mediaIOQueue())
                 .to(exchange())
                 .with(mediaIORoutingKey);
+    }
+
+    @Bean
+    public Binding artistBinding() {
+        return BindingBuilder.bind(artistQueue())
+                .to(exchange())
+                .with(artistRoutingKey);
     }
 
     @Bean

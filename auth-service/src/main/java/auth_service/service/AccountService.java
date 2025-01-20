@@ -17,4 +17,6 @@ public interface AccountService {
 
     AccountResponse updateAccountInfo(UpdateAccountRequest request, Jwt JwtToken);
 
+    AccountResponse getUserInfo(Jwt JwtToken);
+
 }

@@ -98,5 +98,12 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public AccountResponse getUserInfo(Jwt jwtToken) {
+        UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
+        Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+        return accountMapper.toAccountResponse(account);
+    }
+
 
 }

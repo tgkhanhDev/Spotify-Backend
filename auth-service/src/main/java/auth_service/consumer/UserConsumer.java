@@ -56,6 +56,12 @@ public class UserConsumer {
                     AccountResponse updateAccountResponse = accountService.updateAccountInfo(updateAccountRequest, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, updateAccountResponse);
                     break;
+                case "user.get-user-info":
+                    jwtToken = customMessageSender.extractTokenFromMessage(message);
+                    AccountResponse accountResponse = accountService.getUserInfo(jwtToken);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, accountResponse);
+                    break;
+
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }

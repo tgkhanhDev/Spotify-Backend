@@ -5,42 +5,39 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import music_service.config.CustomMessageSender;
 import music_service.config.JWT.CustomJwtDecoder;
-import music_service.dto.musicDto.response.MusicResponse;
-import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
-import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
-import music_service.dto.playlistDto.response.PlaylistOverallResponse;
-import music_service.dto.playlistDto.response.PlaylistResponse;
+import music_service.dto.artistCollaborationDto.response.ArtistGeneralResponse;
+import music_service.dto.authenticationDto.response.AccountResponse;
 import music_service.exception.AuthenException;
 import music_service.exception.ErrorCode;
-import music_service.service.MusicService;
+import music_service.service.ArtistService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MusicConsumer {
-    final MusicService musicService;
+public class ArtistConsumer {
+    //    final AccountRe
     RabbitTemplate rabbitTemplate;
     CustomMessageSender customMessageSender;
     CustomJwtDecoder customJwtDecoder;
+    final ArtistService artistService;
 
-    public MusicConsumer(MusicService musicService, RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender, CustomJwtDecoder customJwtDecoder) {
-        this.musicService = musicService;
+    public ArtistConsumer(RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender, CustomJwtDecoder customJwtDecoder, ArtistService artistService) {
         this.rabbitTemplate = rabbitTemplate;
         this.customMessageSender = customMessageSender;
         this.customJwtDecoder = customJwtDecoder;
+        this.artistService = artistService;
     }
 
-
-    @RabbitListener(queues = "${rabbitmq.music.queue.name}")
-    public void playlistQueueListener(Object payload, Message message) throws Exception {
+    @RabbitListener(queues = "${rabbitmq.artist.queue.name}")
+    public void ArtistListener(Object payload, Message message) throws Exception {
 
         String correlationId = message.getMessageProperties().getCorrelationId();
         String replyToQueue = message.getMessageProperties().getReplyTo();
@@ -51,13 +48,19 @@ public class MusicConsumer {
 
         String key = message.getMessageProperties().getReceivedRoutingKey();
         Jwt jwtToken = null;
-        System.out.println("MUSIC CONSUMER");
+
         try {
             switch (key) {
-                case "music.get-pagination-with-filter":
+                case "artist.get-artist-filter-by-name":
 //                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
-                    List<MusicResponse> musicResponseList = musicService.getAllMusic();
-                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponseList);
+                    String nameFilter = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
+                    List<ArtistGeneralResponse> artistList = artistService.findArtistByName(nameFilter);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, artistList);
+                    break;
+                case "artist.become-artist":
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
+                    AccountResponse accountUpdated = artistService.becomeArtist(jwtToken);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, accountUpdated);
                     break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);

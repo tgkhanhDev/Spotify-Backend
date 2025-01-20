@@ -12,4 +12,5 @@ public interface ArtistCollaborationMapper {
     ArtistCollaborationResponse toArtistCollaborationResponse(ArtistCollaboration artistCollaboration);
     List<ArtistCollaborationResponse> toArtistCollaborationResponseList(List<ArtistCollaboration> artistCollaboration);
 
+
 }
