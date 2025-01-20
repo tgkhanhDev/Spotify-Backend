@@ -1,4 +1,4 @@
-package auth_service.dto.authenticationDto.request;
+package api_gateway.dto.authenticationDto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResetPasswordRequest {
+public class ChangePasswordRequest {
     String email;
+    String password;
     String newPassword;
 }

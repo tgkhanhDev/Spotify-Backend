@@ -1,14 +1,14 @@
 package music_service.service;
 
 import music_service.dto.musicDto.response.MusicResponse;
+import music_service.mapper.MusicElsMapper;
 import music_service.mapper.MusicMapper;
-import music_service.model.Music;
-import music_service.model.MusicEls;
-import music_service.repository.MusicElsRepository;
-import music_service.repository.MusicRepository;
+import music_service.repository.CustomMusicElsRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,24 +19,27 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MusicServiceImpl implements MusicService {
 
-    MusicRepository musicRepository;
-    MusicElsRepository musicElsRepository;
-
+    CustomMusicElsRepository musicElsRepository;
     MusicMapper musicMapper;
+    MusicElsMapper musicElsMapper;
 
-    public MusicServiceImpl(MusicRepository musicRepository, MusicElsRepository musicElsRepository, MusicMapper musicMapper) {
-        this.musicRepository = musicRepository;
+    @Autowired
+    public MusicServiceImpl(CustomMusicElsRepository musicElsRepository, MusicMapper musicMapper, MusicElsMapper musicElsMapper) {
         this.musicElsRepository = musicElsRepository;
         this.musicMapper = musicMapper;
+        this.musicElsMapper = musicElsMapper;
     }
 
     @Override
-    public List<MusicResponse> getAllMusic() {
-        List<Music> music = musicRepository.findAll();
-        System.out.println("Here:");
-        Iterable<MusicEls> test = musicElsRepository.findAll();
+    public List<MusicResponse> getAllMusic(Jwt jwtToken, String searchText) {
+        if (searchText == null) {
+            searchText = "";
+        }
+        if (jwtToken == null) {
+//            throw new AuthenException(ErrorCode.INVALID_TOKEN);
+            return musicElsMapper.toMusicResponseList(musicElsRepository.findWithFilter(searchText));
+        }
 
-
-        return musicMapper.toMusicResponseList(music);
+        return musicElsMapper.toMusicResponseList(musicElsRepository.findWithFilter(searchText));
     }
 }

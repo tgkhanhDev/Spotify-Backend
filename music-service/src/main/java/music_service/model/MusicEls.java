@@ -1,18 +1,21 @@
 package music_service.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import music_service.dto.artistCollaborationDto.response.ArtistCollaborationResponse;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+//import org.springframework.data.elasticsearch.annotations.Document;
+//import org.springframework.data.elasticsearch.annotations.Field;
+//import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Document(indexName = "music")
+//@Document(indexName = "music")
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,32 +26,26 @@ public class MusicEls {
     @Id
     String id;
 
-    @Field(name = "musicName", type = FieldType.Text)
+    @JsonProperty("musicname")
     String musicName;
 
-    @Field(name = "uploadTime", type = FieldType.Date)
-    LocalDate uploadTime;
+    @JsonProperty("uploadtime")
+    String uploadTime;
 
-    @Field(name = "thumbnail", type = FieldType.Text)
+    @JsonProperty("thumbnail")
     String thumbnail;
 
-    @Field(type = FieldType.Nested)
-    private List<ArtistCollaboration> artistcollaboration;
+    @JsonProperty("artistcollaboration")
+    private List<ArtistCollaborationResponse> artistcollaboration;
 
 
-//    "artistcollaboration": [
-//    {
-//        "account": {
-//                "nickname": "UserTwo",
-//                "id": "dae9a8e4-26d4-4254-ae09-53366e1e207c"
-//        },
-//        "thumbnail": "collab2.jpg"
-//    }
-//    ],
-
-//    private class ArtistCollaborationEls {
-//        private thumbnail;
-//    }
+    @JsonProperty("@timestamp")
+    private String timestamp;
+    @JsonProperty("@version")
+    private String version;
+    @JsonProperty("type")
+    private String type;
 }
+
 
 

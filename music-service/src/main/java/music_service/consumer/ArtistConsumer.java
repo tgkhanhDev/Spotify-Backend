@@ -13,6 +13,7 @@ import music_service.service.ArtistService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class ArtistConsumer {
     CustomJwtDecoder customJwtDecoder;
     final ArtistService artistService;
 
+    @Autowired
     public ArtistConsumer(RabbitTemplate rabbitTemplate, CustomMessageSender customMessageSender, CustomJwtDecoder customJwtDecoder, ArtistService artistService) {
         this.rabbitTemplate = rabbitTemplate;
         this.customMessageSender = customMessageSender;

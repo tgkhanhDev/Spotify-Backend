@@ -1,5 +1,6 @@
 package auth_service.service;
 
+import auth_service.dto.authenticationDto.request.ChangePasswordRequest;
 import auth_service.dto.authenticationDto.response.AuthenticationResponse;
 import auth_service.dto.authenticationDto.response.IntrospectResponse;
 import auth_service.exception.AuthenException;
@@ -88,6 +89,13 @@ public class AuthenticationService {
 
     public AccountResponse resetPassword(ResetPasswordRequest req) {
         Account account = accountRepository.findByEmail(req.getEmail()).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
+        account.setPassword(passwordEncoder().encode(req.getNewPassword()));
+
+        return accountMapper.toAccountResponse(accountRepository.save(account));
+    }
+
+    public AccountResponse changePassword(ChangePasswordRequest req) {
+        Account account = accountRepository.findByEmail(req.getEmail()).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
         boolean authenticated = passwordEncoder().matches(req.getPassword(), account.getPassword());
         if(!authenticated){
             throw new AuthenException(ErrorCode.PASSWORD_NOT_MATCH);
@@ -98,7 +106,6 @@ public class AuthenticationService {
 
         return accountMapper.toAccountResponse(accountRepository.save(account));
     }
-
 
     public IntrospectResponse introspect(IntrospectRequest req) {
         var token = req.getToken();

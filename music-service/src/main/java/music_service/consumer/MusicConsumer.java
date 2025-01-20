@@ -51,12 +51,16 @@ public class MusicConsumer {
 
         String key = message.getMessageProperties().getReceivedRoutingKey();
         Jwt jwtToken = null;
-        System.out.println("MUSIC CONSUMER");
         try {
             switch (key) {
                 case "music.get-pagination-with-filter":
-//                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
-                    List<MusicResponse> musicResponseList = musicService.getAllMusic();
+                    try{
+                        jwtToken = customJwtDecoder.extractTokenFromMessage(message);
+                    }catch (AuthenException e){
+                        jwtToken = null;
+                    }
+                    String searchFilter = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
+                    List<MusicResponse> musicResponseList = musicService.getAllMusic(jwtToken, searchFilter);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponseList);
                     break;
                 default:

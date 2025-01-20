@@ -117,6 +117,11 @@ public class AuthConsumer {
                     IntrospectResponse introspectResponse = authenticationService.introspect(introspectRequest);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, introspectResponse);
                     break;
+                case "auth.change-password":
+                    ChangePasswordRequest changePasswordRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), ChangePasswordRequest.class);
+                    AccountResponse accountResponseChangePassword = authenticationService.changePassword(changePasswordRequest);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, accountResponseChangePassword);
+                    break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }

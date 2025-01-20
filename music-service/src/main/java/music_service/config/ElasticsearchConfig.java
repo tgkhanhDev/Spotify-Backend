@@ -1,26 +1,35 @@
 package music_service.config;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import jakarta.validation.constraints.NotNull;
-import org.apache.http.conn.ssl.TrustAllStrategy;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.message.BasicHeader;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.client.ClientConfiguration;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import org.apache.http.Header;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "music_service.repository")
-public class ElasticsearchConfig extends ElasticsearchConfiguration {
+public class ElasticsearchConfig {
+    String serverUrl = "https://elastic.trangiangkhanh.site";
 
-    @Value("${elasticsearch.hostAndPort}")
+    @Value("${elasticsearch.host}")
     @NotNull
-    private String elasticsearchHostAndPort;
+    private String elasticsearchHost;
+
+    @Value("${elasticsearch.port}")
+    @NotNull
+    private int elasticsearchPort;
 
     @Value("${elasticsearch.username}")
     @NotNull
@@ -30,21 +39,27 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @NotNull
     private String elasticsearchPassword;
 
+    @Bean
+    public ElasticsearchClient elasticsearchClient(){
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials(elasticsearchUsername, elasticsearchPassword)); // Replace with your credentials
 
-    @Override
-    public ClientConfiguration clientConfiguration() {
-        return ClientConfiguration.builder()
-                .connectedTo(elasticsearchHostAndPort)
-                .usingSsl()
-                .withBasicAuth(elasticsearchUsername,elasticsearchPassword)
+        RestClient restClient = RestClient.builder(new HttpHost( elasticsearchHost, elasticsearchPort, "https"))
+                .setHttpClientConfigCallback(httpClientBuilder ->
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
                 .build();
+
+        // Create the HLRC
+        RestHighLevelClient hlrc = new RestHighLevelClientBuilder(restClient)
+                .setApiCompatibilityMode(true)
+                .build();
+
+        ElasticsearchTransport transport = new RestClientTransport(
+                restClient, new JacksonJsonpMapper());
+
+        ElasticsearchClient esClient = new ElasticsearchClient(transport);
+        return esClient;
     }
 
-    private static SSLContext buildSSLContext() {
-        try {
-            return new SSLContextBuilder().loadTrustMaterial(null, new TrustAllStrategy()).build();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

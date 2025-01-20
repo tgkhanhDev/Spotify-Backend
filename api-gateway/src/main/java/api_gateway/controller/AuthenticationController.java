@@ -111,6 +111,13 @@ public class AuthenticationController {
         return customMessageSender.customEventSender(exchange, routingKey, false, request, AccountResponse.class);
     }
 
+    @PostMapping("/change-password")
+    @Operation(summary = "Change password")
+    public AccountResponse resetPassword(ChangePasswordRequest request) {
+        String routingKey = "auth.change-password";
+        return customMessageSender.customEventSender(exchange, routingKey, false, request, AccountResponse.class);
+    }
+
     @PostMapping("/forget")
     @Operation(summary = "Forget password (This action will send email to reset password)")
     public EmailAuthenResponse forgetPassword(@RequestParam String email) {

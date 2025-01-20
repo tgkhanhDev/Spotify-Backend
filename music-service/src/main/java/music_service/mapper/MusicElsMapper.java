@@ -9,13 +9,8 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = ArtistCollaborationMapper.class)
-public interface MusicMapper {
+public interface MusicElsMapper {
 
-    Music toMusic(MusicEls musicEls);
-
-    MusicResponse toMusicResponse(Music music);
-    List<MusicResponse> toMusicResponseList(List<Music> music);
-
-    MusicEls toMusicEls(Music music);
-    List<Music> toMusicList(List<MusicEls> musicElsList);
+    MusicResponse toMusicResponse(MusicEls musicEls);
+    List<MusicResponse> toMusicResponseList(List<MusicEls> musicElsList);
 }

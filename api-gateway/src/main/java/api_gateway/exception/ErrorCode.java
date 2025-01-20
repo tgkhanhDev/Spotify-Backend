@@ -30,6 +30,8 @@ public enum ErrorCode {
     DATE_OF_BIRTH_INVALID(1012, "Are you a time traveller?", HttpStatus.BAD_REQUEST),
     CAN_NOT_DESERIALIZE(1013, "Can not deserialize", HttpStatus.BAD_REQUEST),
     INVALID_MESSAGE_QUEUE_REQUEST(1014, "Invalid message queue request", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_SUBSCRIBED(1015, "User already subscribed", HttpStatus.BAD_REQUEST),
+    USER_NOT_SUBSCRIBED(1015, "User not subscribed", HttpStatus.BAD_REQUEST),
     //Music
     MUSIC_NOT_FOUND(2000, "Music not found", HttpStatus.NOT_FOUND),
     INVALID_MUSIC_FILE(2001, "System only support .mp3 file, please contact the administrator", HttpStatus.BAD_REQUEST),

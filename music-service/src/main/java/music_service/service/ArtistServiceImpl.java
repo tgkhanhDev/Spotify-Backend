@@ -1,6 +1,5 @@
 package music_service.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +15,7 @@ import music_service.repository.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,24 +26,24 @@ import java.util.UUID;
 public class ArtistServiceImpl implements ArtistService {
 
     AccountMapper accountMapper;
-    ArtistElsRepository artistRepository;
+    CustomArtistElsRepositoryImpl customArtistRepository;
     AccountRepository accountRepository;
     ArtistElsMapper artistElsMapper;
 
-    public ArtistServiceImpl(AccountMapper accountMapper, ArtistElsRepository artistRepository, AccountRepository accountRepository, ArtistElsMapper artistElsMapper) {
+    public ArtistServiceImpl(AccountMapper accountMapper, CustomArtistElsRepositoryImpl customArtistRepository, AccountRepository accountRepository, ArtistElsMapper artistElsMapper) {
         this.accountMapper = accountMapper;
-        this.artistRepository = artistRepository;
+        this.customArtistRepository = customArtistRepository;
         this.accountRepository = accountRepository;
         this.artistElsMapper = artistElsMapper;
     }
 
     @Override
     public List<ArtistGeneralResponse> findArtistByName(String name) {
-        System.out.println("name: "+name);
-        if(name == null){
+        if (name == null) {
             name = "";
         }
-        List<ArtistEls> list = artistRepository.findByNicknameLike(name);
+//        List<ArtistEls> list = artistRepository.findByNicknameLike(name);
+        List<ArtistEls> list = customArtistRepository.findByNicknameCustom(name);
         return artistElsMapper.toArtistGeneralResponseList(list);
     }
 
@@ -55,16 +55,22 @@ public class ArtistServiceImpl implements ArtistService {
         Optional<Account> accountOptional = accountRepository.findById(userIdClaims);
         if (accountOptional.isPresent()) {
             Account account = accountOptional.get();
+            if(account.isSubcribe()){
+                throw new AuthenException(ErrorCode.USER_ALREADY_SUBSCRIBED);
+            }
             account.setSubcribe(true);
             Account accountUpdated = accountRepository.save(account);
 
             try {
-                artistRepository.save(new ArtistEls().builder()
+                customArtistRepository.save(new ArtistEls().builder()
                         .id(jwtToken.getClaim("userId"))
                         .nickname(accountUpdated.getNickName())
                         .avatar(accountUpdated.getAvatar())
+                        .version("1")
+                        .timestamp(LocalDateTime.now().toString())
+                        .type("sync_artist-collaboration")
                         .build());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.out.println("Got Exception: " + e.getMessage());
                 AccountResponse res = accountMapper.toAccountResponse(account);
                 res.setSubcribe(true);

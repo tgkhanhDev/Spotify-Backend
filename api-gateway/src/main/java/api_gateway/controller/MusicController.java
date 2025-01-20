@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,10 +34,10 @@ public class MusicController {
     @GetMapping("/get-all")
     @Operation(summary = "?*Get music pagination with filter")
     @Cacheable(cacheNames = "music", key = "#root.methodName")
-    public List<MusicResponse> getAllMusic() {
+    public List<MusicResponse> getAllMusic(@RequestParam(required = false) String name ) {
 //        System.out.println("No Cache");
         String routingKey = "music.get-pagination-with-filter";
-        return customMessageSender.customEventSender(exchange, routingKey, true, null, List.class);
+        return customMessageSender.customEventSender(exchange, routingKey, false, name, List.class);
 
 //        return musicService.getAllMusic();
     }
