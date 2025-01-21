@@ -29,6 +29,9 @@ public class Music {
     @Column(name = "thumbnail", nullable = false)
     String thumbnail;
 
+    @Column(name = "musicurl", nullable = false)
+    String musicUrl;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "musicId")
     List<ArtistCollaboration> artistCollaboration;

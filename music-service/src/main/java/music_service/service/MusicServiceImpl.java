@@ -1,5 +1,6 @@
 package music_service.service;
 
+import music_service.dto.musicDto.request.MusicRequest;
 import music_service.dto.musicDto.response.MusicResponse;
 import music_service.mapper.MusicElsMapper;
 import music_service.mapper.MusicMapper;
@@ -41,5 +42,11 @@ public class MusicServiceImpl implements MusicService {
         }
 
         return musicElsMapper.toMusicResponseList(musicElsRepository.findWithFilter(searchText));
+    }
+
+    @Override
+    public List<MusicResponse> addMusic(Jwt jwtToken, MusicRequest musicRequest) {
+
+        return null;
     }
 }

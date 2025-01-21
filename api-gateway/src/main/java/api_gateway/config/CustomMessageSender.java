@@ -133,7 +133,7 @@ public class CustomMessageSender {
     //? This function only use for get Token from HTTP Request
     public String getTokenFromContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        System.out.println("Here");
         // Check if the authentication is valid
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AuthenException(ErrorCode.UNAUTHORIZED);

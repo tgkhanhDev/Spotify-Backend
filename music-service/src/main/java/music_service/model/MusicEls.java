@@ -22,29 +22,24 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MusicEls {
-
     @Id
     String id;
-
     @JsonProperty("musicname")
     String musicName;
-
     @JsonProperty("uploadtime")
     String uploadTime;
-
     @JsonProperty("thumbnail")
     String thumbnail;
-
+    @JsonProperty("musicurl")
+    String musicUrl;
     @JsonProperty("artistcollaboration")
-    private List<ArtistCollaborationResponse> artistcollaboration;
-
-
+    List<ArtistCollaborationResponse> artistCollaboration;
     @JsonProperty("@timestamp")
-    private String timestamp;
+    String timestamp;
     @JsonProperty("@version")
-    private String version;
+    String version;
     @JsonProperty("type")
-    private String type;
+    String type;
 }
 
 

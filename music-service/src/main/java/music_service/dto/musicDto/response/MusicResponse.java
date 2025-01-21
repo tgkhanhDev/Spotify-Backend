@@ -1,5 +1,7 @@
 package music_service.dto.musicDto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import music_service.dto.artistCollaborationDto.response.ArtistCollaborationResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,4 +22,5 @@ public class MusicResponse {
     //DateAdd
     String uploadTime;
     String thumbnail; //ava
+    String musicUrl;
 }

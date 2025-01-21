@@ -8,7 +8,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = ArtistCollaborationMapper.class)
+@Mapper(componentModel = "spring", uses = ArtistCollaborationMapper.class)
 public interface MusicElsMapper {
 
     MusicResponse toMusicResponse(MusicEls musicEls);
