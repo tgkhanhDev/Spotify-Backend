@@ -26,7 +26,20 @@ public class WebConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    @Bean
+    public WebMvcConfigurer configure() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry reg) {
+                reg.addMapping("/**").allowedOrigins("*");
+            }
+        };
+
+    }
+
 }
+
 
 //    @Bean
 //    public WebMvcConfigurer corsConfig() {
