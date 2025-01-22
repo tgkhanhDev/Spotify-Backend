@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import music_service.config.CustomMessageSender;
 import music_service.config.JWT.CustomJwtDecoder;
+import music_service.dto.musicDto.request.MusicRequest;
 import music_service.dto.musicDto.response.MusicResponse;
 import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
 import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
@@ -62,6 +63,12 @@ public class MusicConsumer {
                     String searchFilter = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
                     List<MusicResponse> musicResponseList = musicService.getAllMusic(jwtToken, searchFilter);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponseList);
+                    break;
+                case "music.add-music-for-artist":
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
+                    MusicRequest musicRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), MusicRequest.class);
+                    MusicResponse musicResponse = musicService.addMusic(jwtToken, musicRequest);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponse);
                     break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);

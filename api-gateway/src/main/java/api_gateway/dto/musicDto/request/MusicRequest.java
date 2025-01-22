@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MusicRequest {
-    String id;
     String musicName;
     String uploadTime;
     String thumbnail;

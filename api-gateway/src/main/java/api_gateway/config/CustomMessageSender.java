@@ -123,7 +123,7 @@ public class CustomMessageSender {
         );
 
         // Receive and deserialize the response
-        byte[] responseMessage = (byte[]) rabbitTemplate.receiveAndConvert(replyToQueue, 5000); // Wait for up to 5 seconds
+        byte[] responseMessage = (byte[]) rabbitTemplate.receiveAndConvert(replyToQueue, 10000); // Wait for up to 5 seconds
         if (responseMessage == null) {
             throw new AuthenException(ErrorCode.SERVER_NOT_RESPONSE);
         }
@@ -133,7 +133,6 @@ public class CustomMessageSender {
     //? This function only use for get Token from HTTP Request
     public String getTokenFromContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Here");
         // Check if the authentication is valid
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AuthenException(ErrorCode.UNAUTHORIZED);

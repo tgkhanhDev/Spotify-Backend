@@ -20,4 +20,5 @@ public class MusicResponse {
     //DateAdd
     String uploadTime;
     String thumbnail; //ava
+    String musicUrl;
 }

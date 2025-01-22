@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -65,10 +66,24 @@ public class CustomMusicElsRepositoryImpl implements CustomMusicElsRepository {
             List<Hit<MusicEls>> hits = response.hits().hits();
             return hits.stream().map(Hit::source).toList();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error", e);
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void saveMusicEls(MusicEls musicEls) {
+        try {
+            esClient.create(i -> i
+                    .index("music")
+                    .document(musicEls)
+                    .id(musicEls.getId())
+            );
+        } catch (Exception e) {
+            log.error("Error", e);
+            e.printStackTrace();
+        }
     }
 }

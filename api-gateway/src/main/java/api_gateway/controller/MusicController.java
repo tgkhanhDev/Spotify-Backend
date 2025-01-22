@@ -55,15 +55,6 @@ public class MusicController {
             @RequestParam("musicName") String musicName
     ) {
         String routingKey = "music.add-music-for-artist";
-        try {
-            return createMusicTask.addMusic(routingKey, thumbnail, musicUrl, musicName).get();
-        } catch (AuthenException e) {
-            throw new AuthenException(e.getErrorCode());
-//            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
+        return createMusicTask.addMusic(routingKey, thumbnail, musicUrl, musicName).join();
     }
 }

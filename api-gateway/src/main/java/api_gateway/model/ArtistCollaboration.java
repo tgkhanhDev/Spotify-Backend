@@ -2,6 +2,7 @@ package api_gateway.model;
 
 
 import api_gateway.model.embedKeys.ArtistCollabKey;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,15 +23,11 @@ public class ArtistCollaboration {
     @MapsId("accountId")
     @JoinColumn(name = "accountId", nullable = false)
 //    @JsonIgnore()
+    @JsonProperty("account")
     Account accountId;
-
-//    @ManyToOne()
-//    @MapsId("musicId")
-//    @JoinColumn(name = "musicId", nullable = false)
-////    @JsonIgnore()
-//    Music musicId;
 
     @Column(name = "thumbnail", nullable = false)
     String thumbnail;
+
 
 }

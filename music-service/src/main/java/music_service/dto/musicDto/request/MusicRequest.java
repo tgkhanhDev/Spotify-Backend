@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 public class MusicRequest {
     String musicName;
     String uploadTime;
-    MultipartFile thumbnail;
-    MultipartFile musicUrl;
+    String thumbnail;
+    String musicUrl;
 }
 
 

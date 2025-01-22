@@ -11,6 +11,6 @@ import api_gateway.dto.authenticationDto.response.AccountArtistResponse;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArtistCollaborationResponse {
-    AccountArtistResponse accountId;
+    AccountArtistResponse account;
     String thumbnail;
 }
