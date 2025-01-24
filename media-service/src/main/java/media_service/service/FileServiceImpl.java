@@ -34,11 +34,11 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
 
     @NotNull
-    @Value("${music-file-path}")
+    @Value("${dev-music-file-path}")
     protected String musicFilePath;
 
     @NotNull
-    @Value("${image-file-path}")
+    @Value("${dev-image-file-path}")
     protected String imageFilePath;
 
     @NotNull
