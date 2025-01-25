@@ -1,6 +1,7 @@
 package auth_service.dto.authenticationDto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,5 +21,6 @@ public class AccountResponse {
     LocalDate birthday;
     String nickName;
     String avatar;
+    @JsonProperty("isSubcribe")
     boolean isSubcribe;
 }

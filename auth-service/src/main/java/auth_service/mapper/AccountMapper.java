@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface AccountMapper {
     AccountArtistResponse toAccountUserMapperResponse(Account account);
 
@@ -18,5 +18,6 @@ public interface AccountMapper {
             @Mapping(source = "dateOfBirth", target = "birthday", dateFormat = "dd/MM/yyyy")
     })
     Account toAccount(CreateAccountRequest createAccountRequest);
+
     AccountResponse toAccountResponse(Account account);
 }

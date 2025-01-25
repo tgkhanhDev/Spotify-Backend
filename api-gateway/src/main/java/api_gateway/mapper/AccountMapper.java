@@ -18,5 +18,6 @@ public interface AccountMapper {
             @Mapping(source = "dateOfBirth", target = "birthday", dateFormat = "dd/MM/yyyy")
     })
     Account toAccount(CreateAccountRequest createAccountRequest);
+
     AccountResponse toAccountResponse(Account account);
 }

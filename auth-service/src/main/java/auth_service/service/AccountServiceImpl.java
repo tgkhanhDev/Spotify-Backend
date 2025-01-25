@@ -102,7 +102,13 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse getUserInfo(Jwt jwtToken) {
         UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
         Account account = accountRepository.findById(userIdClaims).orElseThrow(() -> new AuthenException(ErrorCode.USER_NOT_EXISTED));
-        return accountMapper.toAccountResponse(account);
+        log.info("Get user info: " + account.toString());
+
+        AccountResponse accountResponse = accountMapper.toAccountResponse(account);
+        accountResponse.setSubcribe(account.isSubcribe());
+        log.info("Get user infoResponse: " + accountResponse.toString());
+
+        return accountResponse;
     }
 
 
