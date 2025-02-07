@@ -13,4 +13,6 @@ public interface MusicService {
     MusicResponse deleteMusic(Jwt jwtToken, String musicId);
 
     MusicResponse addMusic(Jwt jwtToken, MusicRequest musicRequest);
+
+    List<MusicResponse> generateMusicQueueByMusicId(String musicQueueId);
 }

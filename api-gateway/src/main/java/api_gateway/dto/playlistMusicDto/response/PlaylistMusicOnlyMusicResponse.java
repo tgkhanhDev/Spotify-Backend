@@ -18,5 +18,6 @@ public class PlaylistMusicOnlyMusicResponse {
     String musicName;
     String uploadTime;
     String thumbnail;
+    String musicUrl;
     List<ArtistCollaborationResponse> artistCollaboration;
 }

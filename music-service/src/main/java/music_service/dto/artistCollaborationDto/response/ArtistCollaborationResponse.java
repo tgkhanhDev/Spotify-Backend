@@ -1,6 +1,7 @@
 package music_service.dto.artistCollaborationDto.response;
 
 //import music_service.dto.accountDto.response.AccountArtistResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import music_service.dto.authenticationDto.response.AccountArtistResponse;
@@ -11,6 +12,7 @@ import music_service.dto.authenticationDto.response.AccountArtistResponse;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArtistCollaborationResponse {
-    AccountArtistResponse account;
+    @JsonProperty("account")
+    AccountArtistResponse accountId;
     String thumbnail;
 }

@@ -118,7 +118,7 @@ public class MusicServiceImpl implements MusicService {
 
         ArtistCollaborationResponse acr = ArtistCollaborationResponse
                 .builder()
-                .account(AccountArtistResponse.builder()
+                .accountId(AccountArtistResponse.builder()
                         .id(artist.getId())
                         .nickName(artist.getNickName())
                         .build())
@@ -140,5 +140,10 @@ public class MusicServiceImpl implements MusicService {
 
         musicElsRepository.saveMusicEls(musicEls);
         return musicMapper.toMusicResponse(music);
+    }
+
+    @Override
+    public List<MusicResponse> generateMusicQueueByMusicId(String musicQueueId) {
+        return musicMapper.toMusicResponseList(musicRepository.findRandom20MusicQueue());
     }
 }

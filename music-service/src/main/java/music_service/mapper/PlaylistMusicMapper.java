@@ -20,6 +20,7 @@ public interface PlaylistMusicMapper {
             @Mapping(source = "music.musicName", target = "musicName"),
             @Mapping(source = "music.thumbnail", target = "thumbnail"),
             @Mapping(source = "music.uploadTime", target = "uploadTime"),
+            @Mapping(source = "music.musicUrl", target = "musicUrl"),
             @Mapping(source = "music.artistCollaboration", target = "artistCollaboration")
     })
     PlaylistMusicOnlyMusicResponse toPlaylistMusicOnlyMusicResponse(PlaylistMusic playlistMusic);

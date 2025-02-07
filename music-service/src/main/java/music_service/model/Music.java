@@ -34,6 +34,6 @@ public class Music {
     @Column(name = "musicurl", nullable = false)
     String musicUrl;
 
-    @OneToMany(mappedBy = "music", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "music", fetch = FetchType.EAGER , cascade = CascadeType.ALL, orphanRemoval = true)
     List<ArtistCollaboration> artistCollaboration;
 }
