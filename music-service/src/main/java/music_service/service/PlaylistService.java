@@ -26,4 +26,5 @@ public interface PlaylistService {
 
     PlaylistResponse removePlaylistMusic(UpdatePlaylistMusicRequest request, Jwt jwtToken);
 
+    List<PlaylistOverallResponse> getPlaylistByArtist(UUID artistId);
 }

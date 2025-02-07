@@ -52,7 +52,13 @@ public class PlaylistController {
     public PlaylistResponse getPlaylistById(@RequestParam UUID playlistId) {
         String routingKey = "playlist.get-playlist-by-id";
         return customMessageSender.customEventSender(exchange, routingKey, false, playlistId, PlaylistResponse.class);
-//        return playlistService.getPlaylistById(playlistId);
+    }
+
+    @GetMapping("/get-all/{userId}")
+    @Operation(summary = "Get playlist by artist")
+    public List<PlaylistOverallResponse> getPlaylistByArtistId(@RequestParam UUID userId) {
+        String routingKey = "playlist.get-playlist-by-artist";
+        return customMessageSender.customEventSender(exchange, routingKey, false, userId, List.class);
     }
 
     @PostMapping("/create")

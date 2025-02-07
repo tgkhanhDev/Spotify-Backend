@@ -119,6 +119,11 @@ public class PlaylistConsumer {
                     PlaylistResponse removePlaylistMusicResponse = playlistService.removePlaylistMusic(removePlaylistMusicRequest, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, removePlaylistMusicResponse);
                     break;
+                case "playlist.get-playlist-by-artist":
+                    UUID artistId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), UUID.class);
+                    List<PlaylistOverallResponse> getPlaylistByArtistResponse = playlistService.getPlaylistByArtist(artistId);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, getPlaylistByArtistResponse);
+                    break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }

@@ -19,6 +19,7 @@ import java.util.UUID;
 public class Music {
 
     @Id
+    @GeneratedValue
     UUID id;
 
     @Column(name = "musicName", nullable = false)
@@ -33,7 +34,6 @@ public class Music {
     @Column(name = "musicurl", nullable = false)
     String musicUrl;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "musicId")
+    @OneToMany(mappedBy = "music", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ArtistCollaboration> artistCollaboration;
 }

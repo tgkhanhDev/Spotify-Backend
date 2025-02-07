@@ -19,14 +19,18 @@ public class ArtistCollaboration {
     @EmbeddedId
     ArtistCollabKey id;
 
-    @ManyToOne()
+    @ManyToOne
+    @MapsId("musicId")  // Ensure it maps to the composite key
+    @JoinColumn(name = "musicId", nullable = false)
+    Music music;  // ✅ Reference to Music
+
+    @ManyToOne
     @MapsId("accountId")
     @JoinColumn(name = "accountId", nullable = false)
-//    @JsonIgnore()
     @JsonProperty("account")
     Account accountId;
 
-    @Column(name = "thumbnail", nullable = false)
+    @Column(name = "thumbnail")
     String thumbnail;
 
 }

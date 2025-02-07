@@ -196,5 +196,10 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistMapper.toPlaylistResponse(playlistRepository.findById(request.getPlaylistId()).get());
     }
 
+    @Override
+    public List<PlaylistOverallResponse> getPlaylistByArtist(UUID artistId) {
+        return playlistMapper.toPlaylistOverallResponseList(playlistRepository.findAllByAccount_Id(artistId));
+    }
+
 
 }

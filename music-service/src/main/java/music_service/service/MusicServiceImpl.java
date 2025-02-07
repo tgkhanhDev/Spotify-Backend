@@ -69,6 +69,7 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
+    @Transactional
     public MusicResponse deleteMusic(Jwt jwtToken, String musicId) {
 
         //! Dang ly cho nay phai check jwt's userId co khop voi music hay khong. Nhung ma toi luoi qua =)))
