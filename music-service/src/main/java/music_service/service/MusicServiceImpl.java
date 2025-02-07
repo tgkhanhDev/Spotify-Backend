@@ -64,6 +64,24 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
+    public List<MusicResponse> getAllMusicByArtist(String artistId) {
+        return musicElsMapper.toMusicResponseList(musicElsRepository.findByArtist(artistId));
+    }
+
+    @Override
+    public MusicResponse deleteMusic(Jwt jwtToken, String musicId) {
+
+        //! Dang ly cho nay phai check jwt's userId co khop voi music hay khong. Nhung ma toi luoi qua =)))
+        Boolean isSubscribe = jwtToken.getClaim("isSubscribe"); // Replace "sub" with the appropriate claim key for user ID
+        if (!isSubscribe) throw new AuthenException(ErrorCode.USER_NOT_SUBSCRIBED);
+
+        MusicResponse music = musicMapper.toMusicResponse(musicRepository.findById(UUID.fromString(musicId)).orElseThrow(() -> new AuthenException(ErrorCode.MUSIC_NOT_FOUND)));
+        musicRepository.deleteById(UUID.fromString(musicId));
+        musicElsRepository.deleteMusicEls(musicId);
+        return music;
+    }
+
+    @Override
     @Transactional
     public MusicResponse addMusic(Jwt jwtToken, MusicRequest musicRequest) {
         Boolean isSubscribe = jwtToken.getClaim("isSubscribe"); // Replace "sub" with the appropriate claim key for user ID

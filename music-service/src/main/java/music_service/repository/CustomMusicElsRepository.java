@@ -13,8 +13,11 @@ import java.util.UUID;
 
 public interface CustomMusicElsRepository {
 
-    List<MusicEls> findWithFilter(String nickname, Jwt jwtToken);
     List<MusicEls> findWithFilter(String nickname);
+    List<MusicEls> findByArtist(String artistId);
+
+
+    void deleteMusicEls(String musicId);
 
     void saveMusicEls(MusicEls musicEls);
 }

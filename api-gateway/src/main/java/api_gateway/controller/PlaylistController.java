@@ -1,6 +1,7 @@
 package api_gateway.controller;
 
 import api_gateway.config.CustomMessageSender;
+import api_gateway.dto.playlistDto.response.PlaylistDetailByUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -31,16 +32,22 @@ public class PlaylistController {
         this.customMessageSender = customMessageSender;
     }
 
+    @GetMapping("/get-all")
+    @Operation(summary = "Get all playlist")
+    @Cacheable(cacheNames = "playlist", key = "#root.methodName")
+    public List<PlaylistOverallResponse> getAllPlaylist() {
+        String routingKey = "playlist.get-all-playlist";
+        return customMessageSender.customEventSender(exchange, routingKey, false, null, List.class);
+    }
 
     @GetMapping("")
     @Operation(summary = "*Get all playlist by user")
-    @Cacheable(cacheNames = "playlist", key = "#root.methodName")
-    public List<PlaylistOverallResponse> getAllPlaylistByUser() {
+    public PlaylistDetailByUser getAllPlaylistByUser() {
         String routingKey = "playlist.get-all-playlist-by-user";
-        return customMessageSender.customEventSender(exchange, routingKey, true, null, List.class);
+        return customMessageSender.customEventSender(exchange, routingKey, true, null, PlaylistDetailByUser.class);
     }
 
-    @GetMapping("/{playlistId}")
+    @GetMapping("/detail/{playlistId}")
     @Operation(summary = "Get playlist details")
     public PlaylistResponse getPlaylistById(@RequestParam UUID playlistId) {
         String routingKey = "playlist.get-playlist-by-id";

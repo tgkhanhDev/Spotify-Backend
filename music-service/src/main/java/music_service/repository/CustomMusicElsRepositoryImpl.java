@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -22,11 +23,6 @@ public class CustomMusicElsRepositoryImpl implements CustomMusicElsRepository {
 
     @Autowired
     private ElasticsearchClient esClient;
-
-    @Override
-    public List<MusicEls> findWithFilter(String nickname, Jwt jwtToken) {
-        return null;
-    }
 
     @Override
     public List<MusicEls> findWithFilter(String searchText) {
@@ -71,6 +67,55 @@ public class CustomMusicElsRepositoryImpl implements CustomMusicElsRepository {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<MusicEls> findByArtist(String artistId) {
+        try {
+            SearchResponse<MusicEls> response = esClient.search(s -> s
+                            .index("music")
+                            .size(5)
+                            .query(q -> q
+                                    .bool(b -> b
+                                            .must(m -> m
+                                                    .term(t -> t
+                                                            .field("artistcollaboration.account.id.keyword")
+                                                            .value(artistId))
+                                            )
+                                    )
+                            ),
+                    MusicEls.class
+            );
+            TotalHits total = response.hits().total();
+            boolean isExactResult = total.relation() == TotalHitsRelation.Eq;
+
+            if (isExactResult) {
+                log.info("There are " + total.value() + " results");
+            } else {
+                log.info("There are more than " + total.value() + " results");
+            }
+
+            List<Hit<MusicEls>> hits = response.hits().hits();
+            return hits.stream().map(Hit::source).toList();
+
+        } catch (Exception e) {
+            log.error("Error", e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteMusicEls(String musicId) {
+        try {
+            esClient.delete(i -> i
+                    .index("music")
+                    .id(musicId)
+            );
+        } catch (Exception e) {
+            log.error("Error", e);
+            e.printStackTrace();
+        }
     }
 
     @Override

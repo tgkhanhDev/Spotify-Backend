@@ -5,8 +5,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import music_service.config.JWT.CustomJwtDecoder;
+import music_service.dto.authenticationDto.response.AccountResponse;
 import music_service.dto.playlistDto.request.UpdatePlaylistMusicRequest;
 import music_service.dto.playlistDto.request.UpdatePlaylistRequest;
+import music_service.dto.playlistDto.response.PlaylistDetailByUser;
 import music_service.dto.playlistDto.response.PlaylistOverallResponse;
 import music_service.dto.playlistDto.response.PlaylistResponse;
 import music_service.exception.AuthenException;
@@ -17,10 +19,11 @@ import music_service.model.Account;
 import music_service.model.Playlist;
 import music_service.model.PlaylistMusic;
 import music_service.model.embedKeys.PlaylistMusicKey;
+import music_service.producer.UserProducer;
 import music_service.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -40,9 +43,10 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistMusicRepository playlistMusicRepository;
     PlaylistMapper playlistMapper;
     CustomJwtDecoder customJwtDecoder;
+    UserProducer userProducer;
 
     @Autowired
-    public PlaylistServiceImpl(PlaylistRepository playlistRepository, SavedPlaylistRepository savedPlaylistRepository, AccountRepository accountRepository, MusicRepository musicRepository, PlaylistMusicRepository playlistMusicRepository, PlaylistMapper playlistMapper, CustomJwtDecoder customJwtDecoder) {
+    public PlaylistServiceImpl(PlaylistRepository playlistRepository, SavedPlaylistRepository savedPlaylistRepository, AccountRepository accountRepository, MusicRepository musicRepository, PlaylistMusicRepository playlistMusicRepository, PlaylistMapper playlistMapper, CustomJwtDecoder customJwtDecoder, UserProducer userProducer) {
         this.playlistRepository = playlistRepository;
         this.savedPlaylistRepository = savedPlaylistRepository;
         this.accountRepository = accountRepository;
@@ -50,17 +54,23 @@ public class PlaylistServiceImpl implements PlaylistService {
         this.playlistMusicRepository = playlistMusicRepository;
         this.playlistMapper = playlistMapper;
         this.customJwtDecoder = customJwtDecoder;
+        this.userProducer = userProducer;
     }
 
 
     @Override
+    public List<PlaylistOverallResponse> getAllPlaylist() {
+        return playlistRepository.findAll(Sort.by(Sort.Direction.DESC, "createdTime")).stream().map(playlistMapper::toPlaylistOverallResponse).toList();
+    }
+
+    @Override
     public List<PlaylistOverallResponse> getAllUserPlaylist(Jwt jwtToken) {
-
         UUID userIdClaims = UUID.fromString(jwtToken.getClaim("userId")); // Replace "sub" with the appropriate claim key for user ID
-
+        System.out.println("JWT token: " + jwtToken);
         List<Playlist> playlists = playlistRepository.findAllByAccount_Id(userIdClaims, Sort.by(Sort.Direction.DESC, "createdTime"));
 
         return playlistMapper.toPlaylistOverallResponseList(playlists);
+
     }
 
     @Override

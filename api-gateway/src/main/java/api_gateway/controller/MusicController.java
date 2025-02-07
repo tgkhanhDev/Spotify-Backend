@@ -37,7 +37,7 @@ public class MusicController {
 
 
     @GetMapping("/get-all")
-    @Operation(summary = "?*Get music pagination with filter")
+    @Operation(summary = "?Get music pagination with filter")
     @Cacheable(cacheNames = "music", key = "#root.methodName")
     public List<MusicResponse> getAllMusic(@RequestParam(required = false) String name) {
 //        System.out.println("No Cache");
@@ -45,6 +45,13 @@ public class MusicController {
         return customMessageSender.customEventSender(exchange, routingKey, false, name, List.class);
 
 //        return musicService.getAllMusic();
+    }
+
+    @GetMapping("/get-by-artist/{userId}")
+    @Operation(summary = "Get all music by artist")
+    public List<MusicResponse> getAllMusicByArtist(@RequestParam(required = true) String userId) {
+        String routingKey = "music.get-music-by-artist";
+        return customMessageSender.customEventSender(exchange, routingKey, false, userId, List.class);
     }
 
     @PostMapping(value = "/add-music", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,4 +64,12 @@ public class MusicController {
         String routingKey = "music.add-music-for-artist";
         return createMusicTask.addMusic(routingKey, thumbnail, musicUrl, musicName).join();
     }
+    @DeleteMapping("/delete-music/{musicId}")
+    @Operation(summary = "*Delete music by id")
+    public MusicResponse deleteMusic(@PathVariable String musicId) {
+        String routingKey = "music.delete-music-by-id";
+        return customMessageSender.customEventSender(exchange, routingKey, true, musicId, MusicResponse.class);
+    }
+
 }
+

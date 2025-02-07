@@ -70,6 +70,17 @@ public class MusicConsumer {
                     MusicResponse musicResponse = musicService.addMusic(jwtToken, musicRequest);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponse);
                     break;
+                case "music.get-music-by-artist":
+                    String artistId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
+                    List<MusicResponse> listMusicOfArtist = musicService.getAllMusicByArtist(artistId);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, listMusicOfArtist);
+                    break;
+                case "music.delete-music-by-id":
+                    jwtToken = customJwtDecoder.extractTokenFromMessage(message);
+                    String musicId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
+                    MusicResponse deletedMusic = musicService.deleteMusic(jwtToken, musicId);
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, deletedMusic);
+                    break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }

@@ -59,6 +59,8 @@ public class CustomMessageSender {
             // Step 1: Convert the byte array to string
             String messageBody = new String(responseMessage, StandardCharsets.UTF_8);
 
+            System.out.println("messageBody: " + messageBody);
+
             // Step 2: Deserialize into a generic JsonNode for inspection
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule()); //handling LocalDatenew ObjectMapper()

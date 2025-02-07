@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface MusicService {
     List<MusicResponse> getAllMusic(Jwt jwtToken, String searchText);
+    List<MusicResponse> getAllMusicByArtist(String artistId);
+
+    MusicResponse deleteMusic(Jwt jwtToken, String musicId);
 
     MusicResponse addMusic(Jwt jwtToken, MusicRequest musicRequest);
 }
