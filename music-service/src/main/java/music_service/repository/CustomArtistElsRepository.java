@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CustomArtistElsRepository {
     List<ArtistEls> findByNicknameCustom(String nickname);
+    List<ArtistEls> findAllArtist();
     ArtistEls save(ArtistEls artistEls) throws Exception;
 }

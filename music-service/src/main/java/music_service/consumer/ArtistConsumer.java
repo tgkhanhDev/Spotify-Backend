@@ -64,6 +64,10 @@ public class ArtistConsumer {
                     AccountResponse accountUpdated = artistService.becomeArtist(jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, accountUpdated);
                     break;
+                case "artist.get-all-artist":
+                    List<ArtistGeneralResponse> artistListAll= artistService.findAll();
+                    customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, artistListAll);
+                    break;
                 default:
                     throw new AuthenException(ErrorCode.INVALID_MESSAGE_QUEUE_REQUEST);
             }

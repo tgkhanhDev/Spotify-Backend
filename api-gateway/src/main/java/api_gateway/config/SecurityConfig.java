@@ -46,6 +46,7 @@ public class SecurityConfig {
             "/playlist/get-all/**",
             "/music/get-all",
             "/artist/get-all",
+            "/artist/get-all-filter",
             "/music/get-by-artist/**",
     };
 

@@ -83,4 +83,10 @@ public class ArtistServiceImpl implements ArtistService {
         }
     }
 
+    @Override
+    public List<ArtistGeneralResponse> findAll() {
+        List<ArtistEls> list = customArtistRepository.findAllArtist();
+        return artistElsMapper.toArtistGeneralResponseList(list);
+    }
+
 }

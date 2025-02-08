@@ -30,11 +30,18 @@ public class ArtistCollaborationController {
     }
 
 
-    @GetMapping("/get-all")
-    @Operation(summary = "Get artists with filter")
+    @GetMapping("/get-all-filter")
+    @Operation(summary = "Get artists with filter limit 5")
     public List<ArtistGeneralResponse> getArtistFilterByName(@RequestParam(required = false) String name) {
         String routingKey = "artist.get-artist-filter-by-name";
         return customMessageSender.customEventSender(exchange, routingKey, false, name, List.class);
+    }
+
+    @GetMapping("/get-all")
+    @Operation(summary = "Get artists")
+    public List<ArtistGeneralResponse> getAllArtist() {
+        String routingKey = "artist.get-all-artist";
+        return customMessageSender.customEventSender(exchange, routingKey, false, null, List.class);
     }
 
     @PatchMapping("/become-artist")

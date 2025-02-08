@@ -10,4 +10,6 @@ public interface ArtistService {
     List<ArtistGeneralResponse> findArtistByName(String name);
 
     AccountResponse becomeArtist (Jwt jwt);
+
+    List<ArtistGeneralResponse> findAll();
 }

@@ -73,6 +73,20 @@ public class CustomArtistElsRepositoryImpl implements CustomArtistElsRepository 
     }
 
     @Override
+    public List<ArtistEls> findAllArtist() {
+        try {
+            return esClient.search(s -> s
+                            .index("artist-collaboration"),
+                    ArtistEls.class
+            ).hits().hits().stream().map(Hit::source).toList();
+        } catch (Exception e) {
+            log.error("Error", e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public ArtistEls save(ArtistEls artistEls) throws Exception {
         try {
             esClient.create(c -> c
