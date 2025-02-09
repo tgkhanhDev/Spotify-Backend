@@ -1,6 +1,7 @@
 package api_gateway.dto.playlistDto.response;
 
 import api_gateway.dto.playlistMusicDto.response.PlaylistMusicOnlyMusicResponse;
+import api_gateway.model.Account;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,5 +22,6 @@ public class PlaylistResponse {
     int songCount;
     //DateAdd
     String description;
+    Account account;
     List<PlaylistMusicOnlyMusicResponse> musics;
 }

@@ -20,7 +20,8 @@ public interface PlaylistMapper {
     //playlistMusicSet
     @Mappings({
             @Mapping(source = "id", target = "playlistId"),
-            @Mapping(source = "playlistMusicSet", target = "musics")
+            @Mapping(source = "playlistMusicSet", target = "musics"),
+            @Mapping(source = "account", target = "account")
     })
     PlaylistResponse toPlaylistResponse(Playlist playlist);
 

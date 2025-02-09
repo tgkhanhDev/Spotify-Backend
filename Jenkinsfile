@@ -72,7 +72,7 @@ pipeline {
         
         stage('Step 2: Remove old container') {
             steps {
-                sh 'docker-compose down'
+                sh 'docker-compose down -u'
                 echo 'Remove container successfully'
             }
         }
