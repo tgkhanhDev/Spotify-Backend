@@ -74,7 +74,6 @@ public class CustomMusicElsRepositoryImpl implements CustomMusicElsRepository {
         try {
             SearchResponse<MusicEls> response = esClient.search(s -> s
                             .index("music")
-                            .size(5)
                             .query(q -> q
                                     .bool(b -> b
                                             .must(m -> m
