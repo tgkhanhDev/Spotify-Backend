@@ -108,6 +108,7 @@ public class MusicServiceImpl implements MusicService {
                         .musicId(savedMusic.getId())
                         .build()
                 )
+                .music(savedMusic)
                 .thumbnail("")
                 .build();
         artistCollaborationRepository.save(ac);

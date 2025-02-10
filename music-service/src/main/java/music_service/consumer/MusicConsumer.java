@@ -67,6 +67,7 @@ public class MusicConsumer {
                 case "music.add-music-for-artist":
                     jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     MusicRequest musicRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), MusicRequest.class);
+                    System.out.println("music ne: " + musicRequest.toString());
                     MusicResponse musicResponse = musicService.addMusic(jwtToken, musicRequest);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponse);
                     break;

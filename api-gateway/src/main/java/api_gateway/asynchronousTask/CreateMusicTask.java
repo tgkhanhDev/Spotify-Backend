@@ -38,7 +38,12 @@ public class CreateMusicTask {
         FileUploadRequest request = FileUploadRequest.builder()
                 .file(thumbnail).build();
         String imageRoutingKey = "media.upload-file-image";
-        return CompletableFuture.completedFuture(customMessageSender.customEventSender(exchange, imageRoutingKey, true, request, FileUploadResponse.class));
+
+        FileUploadResponse response = customMessageSender.customEventSender(exchange, imageRoutingKey, true, request, FileUploadResponse.class);
+        log.info("uploadImageTask: " + response);
+
+
+        return CompletableFuture.completedFuture(response);
     }
 
     @Async
@@ -49,7 +54,11 @@ public class CreateMusicTask {
         String audioRoutingKey = "media.upload-file-audio";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("audioToken==========:" + authentication);
-        return CompletableFuture.completedFuture(customMessageSender.customEventSender(exchange, audioRoutingKey, true, request, FileUploadResponse.class));
+        FileUploadResponse response = customMessageSender.customEventSender(exchange, audioRoutingKey, true, request, FileUploadResponse.class);
+
+        log.info("uploadAudioTask: " + response);
+
+        return CompletableFuture.completedFuture(response);
     }
 
     public CompletableFuture<MusicResponse> addMusic(
@@ -77,6 +86,11 @@ public class CreateMusicTask {
                             // Retrieve results of completed futures
                             FileUploadResponse imageResponse = imageFuture.join();
                             FileUploadResponse audioResponse = audioFuture.join();
+
+                            if (imageResponse == null || audioResponse == null) {
+                                throw new AuthenException(ErrorCode.DATE_FORMAT_INVALID);
+                            }
+
                             MusicRequest musicRequest = MusicRequest.builder()
                                     .musicName(musicName)
                                     .musicUrl(audioResponse.getUrl())
@@ -90,13 +104,13 @@ public class CreateMusicTask {
                         }
                     }).exceptionally(ex -> {
                         // Handle exceptions in the CompletableFuture
-                        Throwable cause = ex.getCause();
-                        if(cause instanceof CompletionException) {
-                            throw new AuthenException(((AuthenException) cause).getErrorCode()); // Re-throw for outer handling
-                        }
+//                        Throwable cause = ex.getCause();
+//                        if(cause instanceof CompletionException) {
+//                            throw new AuthenException(((AuthenException) cause).getErrorCode()); // Re-throw for outer handling
+//                        }
 
                         log.error("Unhandled exception from CompletableFuture: {}", ex.getMessage());
-                        throw new AuthenException(ErrorCode.UNCATEGORIZED_EXCEPTION);
+                        throw new AuthenException(ErrorCode.NULL_VALUE);
                     });
 
         } catch (CompletionException e) {
