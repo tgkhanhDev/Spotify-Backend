@@ -40,7 +40,9 @@ public enum ErrorCode {
     ERROR_WHEN_UPLOAD(2001, "An error occurred while processing the audio file", HttpStatus.BAD_REQUEST),
     MUSIC_ALREADY_IN_PLAYLIST(2001, "Music already in playlist", HttpStatus.BAD_REQUEST),
     MUSIC_NOT_FOUND_IN_PLAYLIST(2001, "Music not found in playlist", HttpStatus.BAD_REQUEST),
-    PLAYLIST_NOT_FOUND(2000, "Playlist not found", HttpStatus.NOT_FOUND);
+    PLAYLIST_NOT_FOUND(2000, "Playlist not found", HttpStatus.NOT_FOUND),
+    IMAGE_FILE_EXCEED(2001, "Image must not exceed 2MB", HttpStatus.BAD_REQUEST),
+    MUSIC_FILE_EXCEED(2001, "Music must not exceed 10MB", HttpStatus.BAD_REQUEST);
 
     int code;
     String message;

@@ -9,4 +9,9 @@ public interface FileService {
 
     FileUploadResponse uploadFileImage(FileUploadRequest request, Jwt jwtToken);
 
+    FileUploadResponse uploadFileAudioAWS(FileUploadRequest request, Jwt jwtToken);
+
+    FileUploadResponse uploadFileImageAWS(FileUploadRequest request, Jwt jwtToken);
+
+
 }

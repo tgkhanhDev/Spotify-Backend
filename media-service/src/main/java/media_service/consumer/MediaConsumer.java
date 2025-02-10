@@ -54,13 +54,13 @@ public class MediaConsumer {
                 case "media.upload-file-audio":
                     jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     FileUploadRequest requestAudio = customMessageSender.decodeAndDeserializeBytes(message.getBody(), FileUploadRequest.class);
-                    FileUploadResponse uploadAudioResponse = fileService.uploadFileAudio(requestAudio, jwtToken);
+                    FileUploadResponse uploadAudioResponse = fileService.uploadFileAudioAWS(requestAudio, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, uploadAudioResponse);
                     break;
                 case "media.upload-file-image":
                     jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     FileUploadRequest request = customMessageSender.decodeAndDeserializeBytes(message.getBody(), FileUploadRequest.class);
-                    FileUploadResponse uploadImageResponse = fileService.uploadFileImage(request, jwtToken);
+                    FileUploadResponse uploadImageResponse = fileService.uploadFileImageAWS(request, jwtToken);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, uploadImageResponse);
                     break;
                 default:
