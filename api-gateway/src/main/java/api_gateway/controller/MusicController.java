@@ -72,10 +72,10 @@ public class MusicController {
     }
 
     @GetMapping("/generate-music-queue/{musicId}")
-    @Operation(summary = "*Generate music id by music id")
+    @Operation(summary = "Generate music id by music id")
     public List<MusicResponse> generateMusicQueueByMusicId(@PathVariable String musicId) {
         String routingKey = "music.generate-music-queue-by-music-id";
-        return customMessageSender.customEventSender(exchange, routingKey, true, musicId, List.class);
+        return customMessageSender.customEventSender(exchange, routingKey, false, musicId, List.class);
     }
 
 }

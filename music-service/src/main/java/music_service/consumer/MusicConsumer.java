@@ -67,7 +67,6 @@ public class MusicConsumer {
                 case "music.add-music-for-artist":
                     jwtToken = customJwtDecoder.extractTokenFromMessage(message);
                     MusicRequest musicRequest = customMessageSender.decodeAndDeserializeBytes(message.getBody(), MusicRequest.class);
-                    System.out.println("music ne: " + musicRequest.toString());
                     MusicResponse musicResponse = musicService.addMusic(jwtToken, musicRequest);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicResponse);
                     break;
@@ -83,7 +82,7 @@ public class MusicConsumer {
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, deletedMusic);
                     break;
                 case "music.generate-music-queue-by-music-id":
-                    jwtToken = customJwtDecoder.extractTokenFromMessage(message); //not use yet
+//                    jwtToken = customJwtDecoder.extractTokenFromMessage(message); //not use yet
                     String musicQueueId = customMessageSender.decodeAndDeserializeBytes(message.getBody(), String.class);
                     List<MusicResponse> musicQueue = musicService.generateMusicQueueByMusicId(musicQueueId);
                     customMessageSender.sendResponseDataToProducer(correlationId, replyToQueue, musicQueue);

@@ -93,14 +93,14 @@ public class MusicServiceImpl implements MusicService {
 
         Music music = Music
                 .builder()
-                .id(UUID.randomUUID())
+//                .id(UUID.randomUUID())
                 .musicName(musicRequest.getMusicName())
                 .musicUrl(musicRequest.getMusicUrl())
                 .thumbnail(musicRequest.getThumbnail())
                 .uploadTime(LocalDateTime.parse(musicRequest.getUploadTime()))
                 .build();
         Music savedMusic = musicRepository.save(music);
-
+        System.out.println("savedMusic: "+ savedMusic.toString());
         ArtistCollaboration ac = ArtistCollaboration.builder()
                 .accountId(artist)
                 .id(ArtistCollabKey.builder()
@@ -111,11 +111,11 @@ public class MusicServiceImpl implements MusicService {
                 .music(savedMusic)
                 .thumbnail("")
                 .build();
-        artistCollaborationRepository.save(ac);
+        ArtistCollaboration newAC =artistCollaborationRepository.save(ac);
 
 //        updateList AC to Music
-        music.setArtistCollaboration(List.of(ac));
-        Music updatedMusic = musicRepository.save(music);
+//        music.setArtistCollaboration(List.of(ac));
+//        Music updatedMusic = musicRepository.save(music);
 
         ArtistCollaborationResponse acr = ArtistCollaborationResponse
                 .builder()
@@ -123,14 +123,14 @@ public class MusicServiceImpl implements MusicService {
                         .id(artist.getId())
                         .nickName(artist.getNickName())
                         .build())
-                .thumbnail(ac.getThumbnail())
+                .thumbnail(newAC.getThumbnail())
                 .build();
 
         MusicEls musicEls = MusicEls.builder()
                 .version("1")
                 .timestamp(LocalDateTime.now().toString())
                 .type("sync_music")
-                .id(music.getId().toString())
+                .id(savedMusic.getId().toString())
                 .musicName(musicRequest.getMusicName())
                 .musicUrl(musicRequest.getMusicUrl())
                 .uploadTime(musicRequest.getUploadTime())
@@ -140,7 +140,7 @@ public class MusicServiceImpl implements MusicService {
                 .build();
 
         musicElsRepository.saveMusicEls(musicEls);
-        return musicMapper.toMusicResponse(music);
+        return musicMapper.toMusicResponse(savedMusic);
     }
 
     @Override

@@ -47,7 +47,8 @@ public class SecurityConfig {
             "/artist/get-all",
             "/artist/get-all-filter",
             "/music/get-all",
-            "/music/get-by-artist/**"
+            "/music/get-by-artist/**",
+            "/music/generate-music-queue/**"
     };
 
     @Autowired
