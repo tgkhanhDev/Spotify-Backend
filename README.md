@@ -10,3 +10,4 @@
 - Frontend: [https://github.com/KrivonZa/Spotify-Web](https://github.com/KrivonZa/Spotify-Web)
 - DeployFrontend: [https://spotify-web-git-master-kevin-truongs-projects-d79498ac.vercel.app/](https://spotify-web-git-master-kevin-truongs-projects-d79498ac.vercel.app/)
 - DeployBackEnd [https://spotify-api.trangiangkhanh.site/swagger-ui/index.html](https://spotify-api.trangiangkhanh.site/swagger-ui/index.html)
+- Demo Project [https://www.youtube.com/watch?v=8sEYOYi7Ecg&t=143s](https://www.youtube.com/watch?v=8sEYOYi7Ecg&t=143s)
